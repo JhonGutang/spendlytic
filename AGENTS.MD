@@ -168,8 +168,10 @@ View → Component → Composable → Store → Service → Model
 **MVP Documentation:**
 - **[low-concept.md](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/low-concept.md)** - MVP overview and project scope
 - **[finance-tracking.md](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/finance-tracking.md)** - Detailed system design, data models, architecture
+- **[features.md](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/features.md)** - Current implemented features lookup
 - **[rule-engine.md](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/rule-engine.md)** - Pattern detection rules and evaluation logic
 - **[finance-habit-tracker.md](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/finance-habit-tracker.md)** - Adaptive feedback system architecture
+- **[date-formatter.md](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/date-formatter.md)** - Date formatting utility documentation
 
 **Future Reference (NOT for MVP):**
 - **[mid-concept.md](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/mid-concept.md)** - Extended concept and design philosophy (advanced features)

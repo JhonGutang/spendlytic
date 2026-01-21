@@ -1,157 +1,113 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { apiService, type MessageResponse } from './services/api.service';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { RouterView } from 'vue-router';
+import AppHeader from './components/AppHeader.vue';
+import AppSidebar from './components/AppSidebar.vue';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
-const message = ref<string>('');
-const description = ref<string>('');
-const loading = ref<boolean>(true);
-const error = ref<string>('');
+// Sidebar state
+const isSidebarCollapsed = ref(false);
+const isMobileDrawerOpen = ref(false);
+const isMobile = ref(false);
 
-onMounted(async () => {
-  try {
-    loading.value = true;
-    const response: MessageResponse = await apiService.getMessage();
-    message.value = response.message;
-    description.value = response.description;
-  } catch (err: any) {
-    error.value = err.message || 'Failed to connect to backend';
-    console.error('Error fetching message from backend:', err);
-  } finally {
-    loading.value = false;
+// Check if mobile on mount and resize
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 768;
+  if (!isMobile.value) {
+    isMobileDrawerOpen.value = false;
   }
+};
+
+onMounted(() => {
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
 });
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile);
+});
+
+const toggleSidebar = () => {
+  if (isMobile.value) {
+    isMobileDrawerOpen.value = !isMobileDrawerOpen.value;
+  } else {
+    isSidebarCollapsed.value = !isSidebarCollapsed.value;
+  }
+};
+
+const closeMobileDrawer = () => {
+  isMobileDrawerOpen.value = false;
+};
 </script>
 
 <template>
-  <div class="container">
-    <div class="card">
-      <h1>Finance Behavioral System</h1>
-      
-      <div v-if="loading" class="loading">
-        <div class="spinner"></div>
-        <p>Connecting to backend...</p>
-      </div>
+  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex">
+    <!-- Desktop Sidebar - Fixed, sits beside the entire app -->
+    <div v-if="!isMobile" class="flex-shrink-0 fixed left-0 top-0 h-screen z-40">
+      <AppSidebar
+        :is-collapsed="isSidebarCollapsed"
+        @toggle-collapse="toggleSidebar"
+      />
+    </div>
 
-      <div v-else-if="error" class="error">
-        <h2>❌ Connection Error</h2>
-        <p>{{ error }}</p>
-        <p class="hint">Make sure the Laravel backend is running on http://localhost:8000</p>
-      </div>
+    <!-- Mobile Drawer -->
+    <Sheet v-model:open="isMobileDrawerOpen">
+      <SheetContent side="left" class="p-0 w-60">
+        <SheetHeader class="sr-only">
+          <SheetTitle>Navigation Menu</SheetTitle>
+        </SheetHeader>
+        <AppSidebar
+          :is-collapsed="false"
+          :is-mobile-open="isMobileDrawerOpen"
+          @close-mobile="closeMobileDrawer"
+        />
+      </SheetContent>
+    </Sheet>
 
-      <div v-else class="success">
-        <h2>✅ Backend Connected Successfully!</h2>
-        <div class="message-box">
-          <p class="message">{{ message }}</p>
-          <p class="description">{{ description }}</p>
+    <!-- Main App Container (Header + Content) - Offset by sidebar width -->
+    <div 
+      class="flex-1 flex flex-col min-w-0 transition-all duration-300"
+      :style="{ marginLeft: isMobile ? '0' : (isSidebarCollapsed ? '64px' : '240px') }"
+    >
+      <!-- Mobile: Fixed Menu Button -->
+      <button
+        v-if="isMobile"
+        @click="toggleSidebar"
+        class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
+        aria-label="Open menu"
+      >
+        <Menu class="w-6 h-6" />
+      </button>
+
+      <!-- Header -->
+      <AppHeader 
+        :is-collapsed="isSidebarCollapsed"
+      />
+
+      <!-- Main Content -->
+      <main class="flex-1 overflow-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <RouterView />
         </div>
-        <div class="info">
-          <p><strong>Frontend:</strong> Vue 3 + TypeScript (Vite)</p>
-          <p><strong>Backend:</strong> Laravel API</p>
-          <p><strong>CORS:</strong> Configured ✓</p>
-        </div>
-      </div>
+      </main>
     </div>
   </div>
 </template>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem;
+/* Mobile Menu Button icons */
+.bg-primary {
+  --primary: 221.2 83.2% 53.3%;
 }
+</style>
 
-.card {
-  background: white;
-  border-radius: 1rem;
-  padding: 3rem;
-  max-width: 600px;
-  width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-h1 {
-  color: #667eea;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-size: 2rem;
-}
-
-h2 {
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.loading {
-  text-align: center;
-  padding: 2rem;
-}
-
-.spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.error {
-  text-align: center;
-  color: #e53e3e;
-}
-
-.hint {
-  font-size: 0.9rem;
-  color: #718096;
-  margin-top: 1rem;
-}
-
-.success {
-  text-align: center;
-}
-
-.message-box {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  margin: 1.5rem 0;
-}
-
-.message {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.description {
-  font-size: 1rem;
-  opacity: 0.9;
-}
-
-.info {
-  background: #f7fafc;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  text-align: left;
-}
-
-.info p {
-  margin: 0.5rem 0;
-  color: #2d3748;
-}
-
-.info strong {
-  color: #667eea;
+<style scoped>
+a {
+  @apply text-slate-600 hover:text-slate-900;
 }
 </style>

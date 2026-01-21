@@ -138,6 +138,10 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 - ✓ Summary updates in real-time when transactions are added/edited/deleted
 - ✓ Summary can be filtered by date range (optional for MVP)
 
+**UI/UX Refinement:**
+- **Sidebar Navigation**: Fixed and non-scrollable sidebar for persistent access to main views.
+- **Micro-interactions**: Collapsible sidebar with smooth transitions.
+
 **Calculations:**
 ```
 Total Income = SUM(transactions WHERE type = 'income')
@@ -318,9 +322,10 @@ Database
    - Example: `DashboardView`, `TransactionsView`
 
 2. **Component Layer**
-   - Reusable UI components
+   - Reusable UI components built with **shadcn-vue**
+   - Headless UI components with full Tailwind CSS styling control
    - Presentational logic
-   - Example: `TransactionForm`, `SummaryCard`, `ExpenseChart`
+   - Example: `TransactionForm`, `SummaryCard`, `ExpenseChart`, `AppSidebar`
 
 3. **Composable Layer**
    - Shared reactive logic (Vue Composition API)
@@ -743,8 +748,10 @@ When implementing future features:
 
 - See [`AGENTS.MD`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/AGENTS.MD) for development standards and architecture patterns
 - See [`low-concept.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/low-concept.md) for MVP overview
+- See [`features.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/features.md) for current implemented features
 - See [`rule-engine.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/rule-engine.md) for pattern detection rules
 - See [`finance-habit-tracker.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/finance-habit-tracker.md) for adaptive feedback system
+- See [`date-formatter.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/date-formatter.md) for date utility details
 - Laravel Documentation: https://laravel.com/docs
 - Vue 3 Documentation: https://vuejs.org/guide
 - TypeScript Documentation: https://www.typescriptlang.org/docs

@@ -1,5 +1,16 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import { VueQueryPlugin } from '@tanstack/vue-query';
+import { queryClient } from './config/queryClient';
+import './style.css';
+import App from './App.vue';
+import router from './router';
 
-createApp(App).mount('#app')
+const app = createApp(App);
+const pinia = createPinia();
+
+app.use(pinia);
+app.use(router);
+app.use(VueQueryPlugin, { queryClient });
+
+app.mount('#app');
