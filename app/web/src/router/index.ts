@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import LandingView from '../views/LandingView.vue';
 import dashboardView from '../views/DashboardView.vue';
 import transactionsView from '../views/TransactionsView.vue';
 
@@ -7,13 +8,18 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'landing',
+      component: LandingView,
+    },
+    {
+      path: '/dashboard',
       name: 'dashboard',
-      component: () => import('../views/DashboardView.vue'),
+      component: dashboardView,
     },
     {
       path: '/transactions',
       name: 'transactions',
-      component: () => import('../views/TransactionsView.vue'),
+      component: transactionsView,
     },
   ],
 });

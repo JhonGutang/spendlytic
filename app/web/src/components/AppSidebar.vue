@@ -18,7 +18,7 @@ const route = useRoute();
 
 const navItems = [
   {
-    to: '/',
+    to: '/dashboard',
     icon: LayoutDashboard,
     label: 'Dashboard',
     exact: true,

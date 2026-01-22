@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { RouterView } from 'vue-router';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { RouterView, useRoute } from 'vue-router';
 import AppHeader from './components/AppHeader.vue';
 import AppSidebar from './components/AppSidebar.vue';
 import {
@@ -9,6 +9,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+
+const route = useRoute();
+
+// Check if current route is landing page
+const isLandingPage = computed(() => route.name === 'landing');
 
 // Sidebar state
 const isSidebarCollapsed = ref(false);
@@ -47,16 +52,16 @@ const closeMobileDrawer = () => {
 
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex">
-    <!-- Desktop Sidebar - Fixed, sits beside the entire app -->
-    <div v-if="!isMobile" class="flex-shrink-0 fixed left-0 top-0 h-screen z-40">
+    <!-- Desktop Sidebar - Fixed, sits beside the entire app (hidden on landing page) -->
+    <div v-if="!isMobile && !isLandingPage" class="flex-shrink-0 fixed left-0 top-0 h-screen z-40">
       <AppSidebar
         :is-collapsed="isSidebarCollapsed"
         @toggle-collapse="toggleSidebar"
       />
     </div>
 
-    <!-- Mobile Drawer -->
-    <Sheet v-model:open="isMobileDrawerOpen">
+    <!-- Mobile Drawer (hidden on landing page) -->
+    <Sheet v-if="!isLandingPage" v-model:open="isMobileDrawerOpen">
       <SheetContent side="left" class="p-0 w-60">
         <SheetHeader class="sr-only">
           <SheetTitle>Navigation Menu</SheetTitle>
@@ -72,11 +77,11 @@ const closeMobileDrawer = () => {
     <!-- Main App Container (Header + Content) - Offset by sidebar width -->
     <div 
       class="flex-1 flex flex-col min-w-0 transition-all duration-300"
-      :style="{ marginLeft: isMobile ? '0' : (isSidebarCollapsed ? '64px' : '240px') }"
+      :style="{ marginLeft: isLandingPage ? '0' : (isMobile ? '0' : (isSidebarCollapsed ? '64px' : '240px')) }"
     >
-      <!-- Mobile: Fixed Menu Button -->
+      <!-- Mobile: Fixed Menu Button (hidden on landing page) -->
       <button
-        v-if="isMobile"
+        v-if="isMobile && !isLandingPage"
         @click="toggleSidebar"
         class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
         aria-label="Open menu"
@@ -84,14 +89,15 @@ const closeMobileDrawer = () => {
         <Menu class="w-6 h-6" />
       </button>
 
-      <!-- Header -->
+      <!-- Header (hidden on landing page) -->
       <AppHeader 
+        v-if="!isLandingPage"
         :is-collapsed="isSidebarCollapsed"
       />
 
       <!-- Main Content -->
       <main class="flex-1 overflow-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div :class="isLandingPage ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'">
           <RouterView />
         </div>
       </main>
