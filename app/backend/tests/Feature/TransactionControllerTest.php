@@ -144,3 +144,94 @@ test('can get summary', function () {
             ],
         ]);
 });
+
+describe('analytics endpoints', function () {
+    test('can get daily analytics', function () {
+        $response = $this->getJson('/api/transactions/analytics/daily');
+        
+        $response->assertStatus(200)
+            ->assertJson(['success' => true])
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'labels',
+                    'income',
+                    'expenses',
+                ],
+            ]);
+        
+        $data = $response->json('data');
+        expect($data['labels'])->toHaveCount(30)
+            ->and($data['income'])->toHaveCount(30)
+            ->and($data['expenses'])->toHaveCount(30);
+    });
+
+    test('can get daily analytics with custom days parameter', function () {
+        $response = $this->getJson('/api/transactions/analytics/daily?days=7');
+        
+        $response->assertStatus(200);
+        
+        $data = $response->json('data');
+        expect($data['labels'])->toHaveCount(7)
+            ->and($data['income'])->toHaveCount(7)
+            ->and($data['expenses'])->toHaveCount(7);
+    });
+
+    test('can get monthly analytics', function () {
+        $response = $this->getJson('/api/transactions/analytics/monthly');
+        
+        $response->assertStatus(200)
+            ->assertJson(['success' => true])
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'labels',
+                    'income',
+                    'expenses',
+                ],
+            ]);
+        
+        $data = $response->json('data');
+        expect($data['labels'])->toHaveCount(12)
+            ->and($data['income'])->toHaveCount(12)
+            ->and($data['expenses'])->toHaveCount(12);
+    });
+
+    test('can get monthly analytics with custom months parameter', function () {
+        $response = $this->getJson('/api/transactions/analytics/monthly?months=6');
+        
+        $response->assertStatus(200);
+        
+        $data = $response->json('data');
+        expect($data['labels'])->toHaveCount(6)
+            ->and($data['income'])->toHaveCount(6)
+            ->and($data['expenses'])->toHaveCount(6);
+    });
+
+    test('can get yearly analytics', function () {
+        $response = $this->getJson('/api/transactions/analytics/yearly');
+        
+        $response->assertStatus(200)
+            ->assertJson(['success' => true])
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'labels',
+                    'income',
+                    'expenses',
+                ],
+            ]);
+    });
+
+    test('analytics endpoints return correct data types', function () {
+        $response = $this->getJson('/api/transactions/analytics/daily');
+        
+        $data = $response->json('data');
+        
+        expect($data['labels'])->toBeArray()
+            ->and($data['income'])->toBeArray()
+            ->and($data['expenses'])->toBeArray()
+            ->and($data['income'][0])->toBeNumeric()
+            ->and($data['expenses'][0])->toBeNumeric();
+    });
+});

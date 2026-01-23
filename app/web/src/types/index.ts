@@ -57,3 +57,17 @@ export interface CategoryFormData {
   color?: string;
   icon?: string;
 }
+
+export interface ChartDataPoint {
+  label: string;
+  income: number;
+  expenses: number;
+}
+
+export interface AnalyticsData {
+  labels: string[];
+  income: number[];
+  expenses: number[];
+}
+
+export type TimeRange = 'daily' | 'monthly' | 'yearly';

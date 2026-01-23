@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\TransactionService;
+use App\Services\AnalyticsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -11,7 +12,8 @@ use Illuminate\Validation\ValidationException;
 class TransactionController extends Controller
 {
     public function __construct(
-        private TransactionService $transactionService
+        private TransactionService $transactionService,
+        private AnalyticsService $analyticsService
     ) {}
 
     /**
@@ -145,6 +147,47 @@ class TransactionController extends Controller
                 'summary' => $summary,
                 'expenses_by_category' => $expensesByCategory,
             ],
+        ]);
+    }
+
+    /**
+     * Get daily analytics data.
+     */
+    public function dailyAnalytics(Request $request): JsonResponse
+    {
+        $days = $request->query('days', 30);
+        $data = $this->analyticsService->getDailyFlow((int) $days);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * Get monthly analytics data.
+     */
+    public function monthlyAnalytics(Request $request): JsonResponse
+    {
+        $months = $request->query('months', 12);
+        $data = $this->analyticsService->getMonthlyFlow((int) $months);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * Get yearly analytics data.
+     */
+    public function yearlyAnalytics(): JsonResponse
+    {
+        $data = $this->analyticsService->getYearlyFlow();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
         ]);
     }
 }
