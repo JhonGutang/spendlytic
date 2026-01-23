@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { useTransactionStore } from '../stores/transactionStore';
 import { useCategoryStore } from '../stores/categoryStore';
 import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-vue-next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RouterLink } from 'vue-router';
 import { formatDateSafe } from '@/utils';
+import DailyFlowChart from '@/components/charts/DailyFlowChart.vue';
+import MonthlyFlowChart from '@/components/charts/MonthlyFlowChart.vue';
+import YearlyFlowChart from '@/components/charts/YearlyFlowChart.vue';
+import type { TimeRange } from '@/types';
 
 const transactionStore = useTransactionStore();
 const categoryStore = useCategoryStore();
+
+const selectedTimeRange = ref<TimeRange>('daily');
 
 const formattedIncome = computed(() => 
   transactionStore.summary.total_income.toLocaleString('en-US', { 
@@ -103,6 +110,31 @@ onMounted(async () => {
         </CardContent>
       </Card>
     </div>
+
+    <!-- Money Flow Charts -->
+    <Card>
+      <CardHeader>
+        <CardTitle>Money Flow</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Tabs v-model="selectedTimeRange" class="w-full">
+          <TabsList class="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="daily">Daily</TabsTrigger>
+            <TabsTrigger value="monthly">Monthly</TabsTrigger>
+            <TabsTrigger value="yearly">Yearly</TabsTrigger>
+          </TabsList>
+          <TabsContent value="daily">
+            <DailyFlowChart />
+          </TabsContent>
+          <TabsContent value="monthly">
+            <MonthlyFlowChart />
+          </TabsContent>
+          <TabsContent value="yearly">
+            <YearlyFlowChart />
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
 
     <!-- Charts Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

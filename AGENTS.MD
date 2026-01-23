@@ -76,6 +76,9 @@ Planned features (**NOT** for current implementation):
 - **Frontend:** Jest (write tests AFTER implementation)
 - **Focus:** Validate desired behavior, not just coverage
 
+> [!CAUTION]
+> **Test Case Preservation:** Once test cases are created and verified to be working correctly with the expected behavior, they MUST NOT be modified in future implementations. New features should add NEW test cases, not alter existing ones. Modifying working tests breaks the regression safety net and is strictly forbidden unless fixing an actual bug in the test itself.
+
 ### When to Ask
 
 Ask for confirmation if:
@@ -114,6 +117,9 @@ View → Component → Composable → Store → Service → Model
 ```
 
 **Directories:** `libs/`, `utils/`, `config/`
+
+> [!IMPORTANT]
+> **Type Checking:** Before running ANY command (build, dev, test, etc.), ALWAYS run `npm run type-check` first to ensure there are no TypeScript errors. Never proceed with commands if type errors exist.
 
 > [!NOTE]
 > See [`docs/finance-tracking.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/finance-tracking.md) for detailed architecture decisions and layer responsibilities.

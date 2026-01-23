@@ -13,6 +13,11 @@ Route::get('/message', [HealthController::class, 'message']);
 // Category routes
 Route::apiResource('categories', CategoryController::class);
 
+// Transaction analytics routes
+Route::get('/transactions/analytics/daily', [TransactionController::class, 'dailyAnalytics']);
+Route::get('/transactions/analytics/monthly', [TransactionController::class, 'monthlyAnalytics']);
+Route::get('/transactions/analytics/yearly', [TransactionController::class, 'yearlyAnalytics']);
+
 // Transaction routes
 Route::get('/transactions/summary', [TransactionController::class, 'summary']);
 Route::apiResource('transactions', TransactionController::class);
