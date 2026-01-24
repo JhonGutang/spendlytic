@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios';
+import { apiClient } from './AuthService';
 import type {
   Category,
   Transaction,
@@ -9,14 +9,6 @@ import type {
   CategoryFormData,
   AnalyticsData,
 } from '../types';
-
-const apiClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://finance-behavioral-system.onrender.com/api',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-});
 
 // Category API
 export const categoryApi = {

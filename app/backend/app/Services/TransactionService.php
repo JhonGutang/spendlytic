@@ -17,41 +17,41 @@ class TransactionService
     /**
      * Get all transactions.
      */
-    public function getAllTransactions(): Collection
+    public function getAllTransactions(int $userId): Collection
     {
-        return $this->transactionRepository->getAll();
+        return $this->transactionRepository->getAll($userId);
     }
 
     /**
      * Get a transaction by ID.
      */
-    public function getTransactionById(int $id): ?Transaction
+    public function getTransactionById(int $id, int $userId): ?Transaction
     {
-        return $this->transactionRepository->getById($id);
+        return $this->transactionRepository->getById($id, $userId);
     }
 
     /**
      * Get transactions by date range.
      */
-    public function getTransactionsByDateRange(string $startDate, string $endDate): Collection
+    public function getTransactionsByDateRange(string $startDate, string $endDate, int $userId): Collection
     {
-        return $this->transactionRepository->getByDateRange($startDate, $endDate);
+        return $this->transactionRepository->getByDateRange($startDate, $endDate, $userId);
     }
 
     /**
      * Get transactions by category.
      */
-    public function getTransactionsByCategory(int $categoryId): Collection
+    public function getTransactionsByCategory(int $categoryId, int $userId): Collection
     {
-        return $this->transactionRepository->getByCategory($categoryId);
+        return $this->transactionRepository->getByCategory($categoryId, $userId);
     }
 
     /**
      * Get transactions by type.
      */
-    public function getTransactionsByType(string $type): Collection
+    public function getTransactionsByType(string $type, int $userId): Collection
     {
-        return $this->transactionRepository->getByType($type);
+        return $this->transactionRepository->getByType($type, $userId);
     }
 
     /**
@@ -59,8 +59,9 @@ class TransactionService
      *
      * @throws ValidationException
      */
-    public function createTransaction(array $data): Transaction
+    public function createTransaction(array $data, int $userId): Transaction
     {
+        $data['user_id'] = $userId;
         $this->validateTransaction($data);
 
         return $this->transactionRepository->create($data);
@@ -71,35 +72,36 @@ class TransactionService
      *
      * @throws ValidationException
      */
-    public function updateTransaction(int $id, array $data): bool
+    public function updateTransaction(int $id, int $userId, array $data): bool
     {
+        $data['user_id'] = $userId;
         $this->validateTransaction($data, true);
 
-        return $this->transactionRepository->update($id, $data);
+        return $this->transactionRepository->update($id, $userId, $data);
     }
 
     /**
      * Delete a transaction.
      */
-    public function deleteTransaction(int $id): bool
+    public function deleteTransaction(int $id, int $userId): bool
     {
-        return $this->transactionRepository->delete($id);
+        return $this->transactionRepository->delete($id, $userId);
     }
 
     /**
      * Get financial summary.
      */
-    public function getSummary(): array
+    public function getSummary(int $userId): array
     {
-        return $this->transactionRepository->getSummary();
+        return $this->transactionRepository->getSummary($userId);
     }
 
     /**
      * Get expense breakdown by category.
      */
-    public function getExpensesByCategory(): Collection
+    public function getExpensesByCategory(int $userId): Collection
     {
-        return $this->transactionRepository->getExpensesByCategory();
+        return $this->transactionRepository->getExpensesByCategory($userId);
     }
 
     /**
@@ -109,13 +111,22 @@ class TransactionService
      */
     private function validateTransaction(array $data, bool $isUpdate = false): void
     {
-        $requiredRule = $isUpdate ? 'sometimes|required' : 'required';
+        $requiredRule = $isUpdate ? ['sometimes', 'required'] : ['required'];
         
         $rules = [
-            'type' => $requiredRule . '|in:income,expense',
-            'amount' => $requiredRule . '|numeric|min:0.01|max:9999999.99',
-            'date' => $requiredRule . '|date|before_or_equal:today',
-            'category_id' => $requiredRule . '|exists:categories,id',
+            'type' => array_merge($requiredRule, ['in:income,expense']),
+            'amount' => array_merge($requiredRule, ['numeric', 'min:0.01', 'max:9999999.99']),
+            'date' => array_merge($requiredRule, ['date', 'before_or_equal:today']),
+            'category_id' => array_merge($requiredRule, [
+                'exists:categories,id',
+                function ($attribute, $value, $fail) use ($data) {
+                    $userId = $data['user_id'] ?? null;
+                    $category = \App\Models\Category::find($value);
+                    if ($category && $category->user_id !== null && $category->user_id !== $userId) {
+                        $fail('The selected category is invalid.');
+                    }
+                },
+            ]),
             'description' => 'nullable|string|max:1000',
         ];
 

@@ -18,12 +18,14 @@ return new class extends Migration
             $table->date('date');
             $table->foreignId('category_id')->constrained()->restrictOnDelete();
             $table->text('description')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
 
             // Indexes
             $table->index('date');
             $table->index('type');
             $table->index('category_id');
+            $table->index('user_id');
         });
     }
 

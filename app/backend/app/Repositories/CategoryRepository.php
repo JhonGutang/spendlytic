@@ -10,25 +10,40 @@ class CategoryRepository
     /**
      * Get all categories.
      */
-    public function getAll(): Collection
+    public function getAll(int $userId): Collection
     {
-        return Category::orderBy('type')->orderBy('name')->get();
+        return Category::where('user_id', $userId)
+            ->orWhereNull('user_id') // For default categories
+            ->orderBy('type')
+            ->orderBy('name')
+            ->get();
     }
 
     /**
      * Get a category by ID.
      */
-    public function getById(int $id): ?Category
+    public function getById(int $id, int $userId): ?Category
     {
-        return Category::find($id);
+        return Category::where('id', $id)
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhereNull('user_id');
+            })
+            ->first();
     }
 
     /**
      * Get categories by type (income or expense).
      */
-    public function getByType(string $type): Collection
+    public function getByType(string $type, int $userId): Collection
     {
-        return Category::where('type', $type)->orderBy('name')->get();
+        return Category::where('type', $type)
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhereNull('user_id');
+            })
+            ->orderBy('name')
+            ->get();
     }
 
     /**
@@ -42,12 +57,12 @@ class CategoryRepository
     /**
      * Update a category.
      */
-    public function update(int $id, array $data): bool
+    public function update(int $id, int $userId, array $data): bool
     {
-        $category = $this->getById($id);
+        $category = $this->getById($id, $userId);
         
-        if (!$category) {
-            return false;
+        if (!$category || $category->user_id !== $userId) {
+            return false; // Cannot update default or others' categories
         }
 
         return $category->update($data);
@@ -56,16 +71,16 @@ class CategoryRepository
     /**
      * Delete a category.
      */
-    public function delete(int $id): bool
+    public function delete(int $id, int $userId): bool
     {
-        $category = $this->getById($id);
+        $category = $this->getById($id, $userId);
         
-        if (!$category) {
+        if (!$category || $category->user_id !== $userId) {
             return false;
         }
 
         // Check if category has transactions
-        if ($category->transactions()->count() > 0) {
+        if ($category->transactions()->where('user_id', $userId)->count() > 0) {
             return false;
         }
 
@@ -75,14 +90,14 @@ class CategoryRepository
     /**
      * Check if a category has transactions.
      */
-    public function hasTransactions(int $id): bool
+    public function hasTransactions(int $id, int $userId): bool
     {
-        $category = $this->getById($id);
+        $category = $this->getById($id, $userId);
         
         if (!$category) {
             return false;
         }
 
-        return $category->transactions()->count() > 0;
+        return $category->transactions()->where('user_id', $userId)->count() > 0;
     }
 }

@@ -14,16 +14,14 @@ class CategoryController extends Controller
         private CategoryService $categoryService
     ) {}
 
-    /**
-     * Display a listing of categories.
-     */
     public function index(Request $request): JsonResponse
     {
+        $userId = $request->user()->id;
         $type = $request->query('type');
 
         $categories = $type
-            ? $this->categoryService->getCategoriesByType($type)
-            : $this->categoryService->getAllCategories();
+            ? $this->categoryService->getCategoriesByType($type, $userId)
+            : $this->categoryService->getAllCategories($userId);
 
         return response()->json([
             'success' => true,
@@ -31,13 +29,10 @@ class CategoryController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created category.
-     */
     public function store(Request $request): JsonResponse
     {
         try {
-            $category = $this->categoryService->createCategory($request->all());
+            $category = $this->categoryService->createCategory($request->all(), $request->user()->id);
 
             return response()->json([
                 'success' => true,
@@ -56,9 +51,9 @@ class CategoryController extends Controller
     /**
      * Display the specified category.
      */
-    public function show(int $id): JsonResponse
+    public function show(Request $request, int $id): JsonResponse
     {
-        $category = $this->categoryService->getCategoryById($id);
+        $category = $this->categoryService->getCategoryById($id, $request->user()->id);
 
         if (!$category) {
             return response()->json([
@@ -79,7 +74,8 @@ class CategoryController extends Controller
     public function update(Request $request, int $id): JsonResponse
     {
         try {
-            $updated = $this->categoryService->updateCategory($id, $request->all());
+            $userId = $request->user()->id;
+            $updated = $this->categoryService->updateCategory($id, $userId, $request->all());
 
             if (!$updated) {
                 return response()->json([
@@ -91,7 +87,7 @@ class CategoryController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Category updated successfully',
-                'data' => $this->categoryService->getCategoryById($id),
+                'data' => $this->categoryService->getCategoryById($id, $userId),
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -105,10 +101,10 @@ class CategoryController extends Controller
     /**
      * Remove the specified category.
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(Request $request, int $id): JsonResponse
     {
         try {
-            $deleted = $this->categoryService->deleteCategory($id);
+            $deleted = $this->categoryService->deleteCategory($id, $request->user()->id);
 
             if (!$deleted) {
                 return response()->json([
