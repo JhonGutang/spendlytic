@@ -12,19 +12,14 @@ class AnalyticsService
         private TransactionRepository $transactionRepository
     ) {}
 
-    /**
-     * Get daily flow data for the specified number of days.
-     * 
-     * @param int $days Number of days to include (default: 30)
-     * @return array Array with labels, income, and expenses
-     */
-    public function getDailyFlow(int $days = 30): array
+    public function getDailyFlow(int $days = 30, int $userId): array
     {
         $endDate = Carbon::today();
         $startDate = Carbon::today()->subDays($days - 1);
 
         // Get all transactions in the date range using Eloquent
-        $transactions = Transaction::whereDate('date', '>=', $startDate->format('Y-m-d'))
+        $transactions = Transaction::where('user_id', $userId)
+            ->whereDate('date', '>=', $startDate->format('Y-m-d'))
             ->whereDate('date', '<=', $endDate->format('Y-m-d'))
             ->get();
 
@@ -69,19 +64,14 @@ class AnalyticsService
         ];
     }
 
-    /**
-     * Get monthly flow data for the specified number of months.
-     * 
-     * @param int $months Number of months to include (default: 12)
-     * @return array Array with labels, income, and expenses
-     */
-    public function getMonthlyFlow(int $months = 12): array
+    public function getMonthlyFlow(int $months = 12, int $userId): array
     {
         $endDate = Carbon::today()->endOfMonth();
         $startDate = Carbon::today()->subMonths($months - 1)->startOfMonth();
 
         // Get all transactions in the date range using Eloquent
-        $transactions = Transaction::whereDate('date', '>=', $startDate->format('Y-m-d'))
+        $transactions = Transaction::where('user_id', $userId)
+            ->whereDate('date', '>=', $startDate->format('Y-m-d'))
             ->whereDate('date', '<=', $endDate->format('Y-m-d'))
             ->get();
 
@@ -132,10 +122,10 @@ class AnalyticsService
      * 
      * @return array Array with labels, income, and expenses
      */
-    public function getYearlyFlow(): array
+    public function getYearlyFlow(int $userId): array
     {
         // Get all transactions using Eloquent
-        $transactions = Transaction::all();
+        $transactions = Transaction::where('user_id', $userId)->get();
 
         if ($transactions->isEmpty()) {
             return [

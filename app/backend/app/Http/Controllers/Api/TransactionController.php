@@ -21,19 +21,20 @@ class TransactionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $userId = $request->user()->id;
         $type = $request->query('type');
         $categoryId = $request->query('category_id');
         $startDate = $request->query('start_date');
         $endDate = $request->query('end_date');
 
         if ($startDate && $endDate) {
-            $transactions = $this->transactionService->getTransactionsByDateRange($startDate, $endDate);
+            $transactions = $this->transactionService->getTransactionsByDateRange($startDate, $endDate, $userId);
         } elseif ($categoryId) {
-            $transactions = $this->transactionService->getTransactionsByCategory($categoryId);
+            $transactions = $this->transactionService->getTransactionsByCategory($categoryId, $userId);
         } elseif ($type) {
-            $transactions = $this->transactionService->getTransactionsByType($type);
+            $transactions = $this->transactionService->getTransactionsByType($type, $userId);
         } else {
-            $transactions = $this->transactionService->getAllTransactions();
+            $transactions = $this->transactionService->getAllTransactions($userId);
         }
 
         return response()->json([
@@ -48,7 +49,7 @@ class TransactionController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $transaction = $this->transactionService->createTransaction($request->all());
+            $transaction = $this->transactionService->createTransaction($request->all(), $request->user()->id);
 
             return response()->json([
                 'success' => true,
@@ -67,9 +68,9 @@ class TransactionController extends Controller
     /**
      * Display the specified transaction.
      */
-    public function show(int $id): JsonResponse
+    public function show(Request $request, int $id): JsonResponse
     {
-        $transaction = $this->transactionService->getTransactionById($id);
+        $transaction = $this->transactionService->getTransactionById($id, $request->user()->id);
 
         if (!$transaction) {
             return response()->json([
@@ -90,7 +91,8 @@ class TransactionController extends Controller
     public function update(Request $request, int $id): JsonResponse
     {
         try {
-            $updated = $this->transactionService->updateTransaction($id, $request->all());
+            $userId = $request->user()->id;
+            $updated = $this->transactionService->updateTransaction($id, $userId, $request->all());
 
             if (!$updated) {
                 return response()->json([
@@ -102,7 +104,7 @@ class TransactionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction updated successfully',
-                'data' => $this->transactionService->getTransactionById($id),
+                'data' => $this->transactionService->getTransactionById($id, $userId),
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -116,9 +118,10 @@ class TransactionController extends Controller
     /**
      * Remove the specified transaction.
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(Request $request, int $id): JsonResponse
     {
-        $deleted = $this->transactionService->deleteTransaction($id);
+        $userId = $request->user()->id;
+        $deleted = $this->transactionService->deleteTransaction($id, $userId);
 
         if (!$deleted) {
             return response()->json([
@@ -136,10 +139,11 @@ class TransactionController extends Controller
     /**
      * Get financial summary.
      */
-    public function summary(): JsonResponse
+    public function summary(Request $request): JsonResponse
     {
-        $summary = $this->transactionService->getSummary();
-        $expensesByCategory = $this->transactionService->getExpensesByCategory();
+        $userId = $request->user()->id;
+        $summary = $this->transactionService->getSummary($userId);
+        $expensesByCategory = $this->transactionService->getExpensesByCategory($userId);
 
         return response()->json([
             'success' => true,
@@ -156,7 +160,7 @@ class TransactionController extends Controller
     public function dailyAnalytics(Request $request): JsonResponse
     {
         $days = $request->query('days', 30);
-        $data = $this->analyticsService->getDailyFlow((int) $days);
+        $data = $this->analyticsService->getDailyFlow((int) $days, $request->user()->id);
 
         return response()->json([
             'success' => true,
@@ -170,7 +174,7 @@ class TransactionController extends Controller
     public function monthlyAnalytics(Request $request): JsonResponse
     {
         $months = $request->query('months', 12);
-        $data = $this->analyticsService->getMonthlyFlow((int) $months);
+        $data = $this->analyticsService->getMonthlyFlow((int) $months, $request->user()->id);
 
         return response()->json([
             'success' => true,
@@ -181,9 +185,9 @@ class TransactionController extends Controller
     /**
      * Get yearly analytics data.
      */
-    public function yearlyAnalytics(): JsonResponse
+    public function yearlyAnalytics(Request $request): JsonResponse
     {
-        $data = $this->analyticsService->getYearlyFlow();
+        $data = $this->analyticsService->getYearlyFlow($request->user()->id);
 
         return response()->json([
             'success' => true,

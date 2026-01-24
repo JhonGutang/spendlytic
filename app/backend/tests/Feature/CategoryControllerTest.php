@@ -1,13 +1,18 @@
 <?php
 
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    Category::create(['name' => 'Salary', 'type' => 'income', 'is_default' => true]);
-    Category::create(['name' => 'Food', 'type' => 'expense', 'is_default' => true]);
+    $this->user = User::factory()->create();
+    Sanctum::actingAs($this->user);
+    
+    Category::create(['name' => 'Salary', 'type' => 'income', 'is_default' => true, 'user_id' => $this->user->id]);
+    Category::create(['name' => 'Food', 'type' => 'expense', 'is_default' => true, 'user_id' => $this->user->id]);
 });
 
 test('can list all categories', function () {

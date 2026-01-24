@@ -18,10 +18,12 @@ return new class extends Migration
             $table->string('color', 7)->nullable(); // Hex color code (e.g., #FF5733)
             $table->string('icon', 50)->nullable();
             $table->boolean('is_default')->default(false);
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
 
             // Indexes
             $table->index('type');
+            $table->index('user_id');
         });
     }
 

@@ -2,18 +2,24 @@
 
 use App\Models\Category;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->category = Category::create(['name' => 'Food', 'type' => 'expense']);
+    $this->user = User::factory()->create();
+    Sanctum::actingAs($this->user);
+    
+    $this->category = Category::create(['name' => 'Food', 'type' => 'expense', 'user_id' => $this->user->id]);
     
     Transaction::create([
         'type' => 'expense',
         'amount' => 150,
         'date' => '2026-01-15',
         'category_id' => $this->category->id,
+        'user_id' => $this->user->id,
     ]);
 });
 

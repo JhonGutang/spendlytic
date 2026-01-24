@@ -1,6 +1,27 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router';
-import { LayoutDashboard, Receipt, Menu } from 'lucide-vue-next';
+import { LayoutDashboard, Receipt, Menu, LogOut, User, Settings, ChevronsUpDown } from 'lucide-vue-next';
+import { useAuthStore } from '@/stores/authStore';
+import { computed, ref } from 'vue';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Props {
   isCollapsed: boolean;
@@ -15,6 +36,14 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 const route = useRoute();
+const authStore = useAuthStore();
+
+const isLogoutDialogOpen = ref(false);
+
+const userInitials = computed(() => {
+  const name = authStore.user?.name || 'User';
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+});
 
 const navItems = [
   {
@@ -42,6 +71,11 @@ const handleNavClick = () => {
   if (props.isMobileOpen) {
     emit('close-mobile');
   }
+};
+
+const handleLogout = async () => {
+  await authStore.logout();
+  isLogoutDialogOpen.value = false;
 };
 </script>
 
@@ -99,25 +133,83 @@ const handleNavClick = () => {
       </RouterLink>
     </nav>
 
-    <!-- Sidebar Footer -->
+    <!-- Sidebar Footer: User Dropdown -->
     <div class="p-4 border-t border-slate-200">
-      <div
-        :class="[
-          'flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-50',
-          isCollapsed ? 'justify-center' : '',
-        ]"
-      >
-        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-          U
-        </div>
-        <transition name="fade">
-          <div v-if="!isCollapsed" class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-slate-900 truncate">User</p>
-            <p class="text-xs text-slate-500 truncate">user@example.com</p>
-          </div>
-        </transition>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <button
+            :class="[
+              'w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200 text-left outline-none mb-1 group',
+              isCollapsed ? 'justify-center' : '',
+            ]"
+          >
+            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-sm">
+              {{ userInitials }}
+            </div>
+            <transition name="fade">
+              <div v-if="!isCollapsed" class="flex-1 min-w-0 flex items-center justify-between">
+                <div class="flex-1 min-w-0 mr-2">
+                  <p class="text-sm font-medium text-slate-900 truncate">
+                    {{ authStore.user?.name || 'User' }}
+                  </p>
+                  <p class="text-xs text-slate-500 truncate">
+                    {{ authStore.user?.email || 'user@example.com' }}
+                  </p>
+                </div>
+                <ChevronsUpDown class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+              </div>
+            </transition>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent 
+          side="top" 
+          :align="isCollapsed ? 'center' : 'end'" 
+          class="w-56 mb-2 animate-in slide-in-from-bottom-2 duration-200"
+        >
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem class="cursor-pointer">
+              <User class="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem class="cursor-pointer">
+              <Settings class="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem 
+            class="text-red-600 focus:text-red-700 focus:bg-red-50 cursor-pointer"
+            @click="isLogoutDialogOpen = true"
+          >
+            <LogOut class="mr-2 h-4 w-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
+
+    <!-- Logout Confirmation Dialog -->
+    <AlertDialog v-model:open="isLogoutDialogOpen">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You will need to enter your credentials again to access your financial data.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel @click="isLogoutDialogOpen = false">Cancel</AlertDialogCancel>
+          <AlertDialogAction 
+            class="bg-red-600 hover:bg-red-700 text-white"
+            @click="handleLogout"
+          >
+            Log Out
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </aside>
 </template>
 
