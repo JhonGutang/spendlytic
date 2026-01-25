@@ -2,6 +2,15 @@
 
 This document provides a comprehensive list of currently implemented features in the Finance Behavioral System.
 
+## 🔐 User Authentication
+The system provides a secure authentication layer using Laravel Sanctum to manage user access and data privacy.
+
+- **Account Management**:
+    - **Registration**: Users can create new accounts.
+    - **Login/Logout**: Secure session management.
+- **Protected Access**: All financial data routes are protected by authentication middleware.
+- **Profile Management**: Endpoint to retrieve the currently authenticated user's information.
+
 ## 📊 Dashboard
 The Dashboard serves as the central hub for financial overview and quick insights.
 
@@ -12,8 +21,6 @@ The Dashboard serves as the central hub for financial overview and quick insight
 - **Data Visualization**:
     - **Income vs Expense Bar Chart**: A visual comparison of cash flow.
     - **Expense Breakdown Pie Chart**: Distributed view of spending across categories.
-- **Quick Actions**: Easy access to create new transactions.
-
 ## 💸 Transaction Management
 Core functionality for tracking and managing financial events.
 
@@ -24,7 +31,9 @@ Core functionality for tracking and managing financial events.
     - Amount
     - Type (Income/Expense)
 - **Manual Entry**: Form to add new transactions with validation.
+- **User Isolation**: Users can only view, create, update, or delete their own transactions.
 - **Categorization**: Transactions are associated with system or custom categories.
+- **Custom Categories**: Users can create their own categories tailored to their spending habits.
 - **Responsive Layout**: Optimized for both desktop and mobile viewing.
 
 ## 🧭 UI / UX
