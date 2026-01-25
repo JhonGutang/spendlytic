@@ -11,6 +11,18 @@ The system provides a secure authentication layer using Laravel Sanctum to manag
 - **Protected Access**: All financial data routes are protected by authentication middleware.
 - **Profile Management**: Endpoint to retrieve the currently authenticated user's information.
 
+## ⚙️ Rule Engine (Behavioral Logic)
+The core of the system's pattern detection capabilities, providing deterministic feedback based on spending habits.
+
+- **Deterministic Rules**: Implementation of 3 core heuristic rules:
+    - **Category Overspend**: Detects >25% WoW increase in specific categories.
+    - **Weekly Spending Spike**: Detects >20% WoW increase in total spending.
+    - **Frequent Small Purchases**: Detects "death by a thousand cuts" (10+ transactions < $10).
+- **Explainable Logic**: Every trigger includes supporting data (e.g., specific percentages and transaction counts).
+- **Edge Case Handling**: Built-in safety for new users with no baseline data.
+- **API Evaluation**: Authenticated endpoint to trigger pattern detection on demand.
+- **Demo Mode**: Includes a `RuleEngineSeeder` with a pre-configured demo account (`demo@example.com`) showing real-world triggers.
+
 ## 📊 Dashboard
 The Dashboard serves as the central hub for financial overview and quick insights.
 
