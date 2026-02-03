@@ -63,14 +63,14 @@ class RuleEngineService
         // Get summaries
         $currentSummary = $this->transactionRepository->getWeeklySummary(
             $userId, 
-            $currentWeekStart->toDateTimeString(), 
-            $currentWeekEnd->toDateTimeString()
+            $currentWeekStart->toDateString(), 
+            $currentWeekEnd->toDateString()
         );
         
         $previousSummary = $this->transactionRepository->getWeeklySummary(
             $userId, 
-            $previousWeekStart->toDateTimeString(), 
-            $previousWeekEnd->toDateTimeString()
+            $previousWeekStart->toDateString(), 
+            $previousWeekEnd->toDateString()
         );
 
         $results = [];

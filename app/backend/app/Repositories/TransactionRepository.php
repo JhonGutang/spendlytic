@@ -142,7 +142,8 @@ class TransactionRepository
     public function getWeeklySummary(int $userId, string $startDate, string $endDate): array
     {
         $baseQuery = Transaction::where('transactions.user_id', $userId)
-            ->whereBetween('transactions.date', [$startDate, $endDate])
+            ->whereDate('transactions.date', '>=', $startDate)
+            ->whereDate('transactions.date', '<=', $endDate)
             ->where('transactions.type', 'expense');
 
         $totalExpenses = (clone $baseQuery)->sum('transactions.amount');
