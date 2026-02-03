@@ -105,6 +105,36 @@ export interface RuleTrigger {
   data: Record<string, any>;
 }
 
+export interface FeedbackHistory {
+  id: number;
+  user_id: number;
+  week_start: string;
+  week_end: string;
+  rule_id: string;
+  category_name?: string | null;
+  template_id: string;
+  level: 'basic' | 'advanced';
+  explanation: string;
+  suggestion: string;
+  data: Record<string, any>;
+  displayed: boolean;
+  user_acknowledged: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserProgress {
+  id: number;
+  user_id: number;
+  week_start: string;
+  week_end: string;
+  rules_triggered: string[];
+  rules_not_triggered: string[];
+  improvement_score: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface RuleEvaluation {
   user_id: number;
   evaluation_date: string;
@@ -113,4 +143,9 @@ export interface RuleEvaluation {
     previous: { start: string; end: string };
   };
   triggered_rules: RuleTrigger[];
+}
+
+export interface EvaluationResponse {
+  evaluation: RuleEvaluation;
+  feedback: FeedbackHistory[];
 }

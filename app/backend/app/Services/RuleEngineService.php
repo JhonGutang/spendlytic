@@ -13,8 +13,37 @@ class RuleEngineService
     private const SMALL_PURCHASE_COUNT_THRESHOLD = 10;
 
     public function __construct(
-        private TransactionRepository $transactionRepository
+        private TransactionRepository $transactionRepository,
+        private \App\Repositories\UserProgressRepository $userProgressRepository
     ) {}
+
+    /**
+     * Check if evaluation should be re-run based on data changes.
+     */
+    public function shouldReevaluate(int $userId, ?Carbon $targetDate = null): bool
+    {
+        $targetDate = $targetDate ?? Carbon::today();
+        $weekStart = $targetDate->clone()->startOfWeek(Carbon::MONDAY)->toDateString();
+        $weekEnd = $targetDate->clone()->endOfWeek(Carbon::SUNDAY)->toDateString();
+
+        $progress = $this->userProgressRepository->getByWeek($userId, $weekStart);
+
+        if (!$progress) {
+            return true; // No previous evaluation for this week
+        }
+
+        $lastTransactionUpdate = $this->transactionRepository->getLastUpdateTimestamp(
+            $userId, 
+            $weekStart, 
+            $weekEnd
+        );
+
+        if (!$lastTransactionUpdate) {
+            return false; // No transactions, no need to re-evaluate if we already have a progress record (though unlikely)
+        }
+
+        return Carbon::parse($lastTransactionUpdate)->gt($progress->updated_at);
+    }
 
     /**
      * Evaluate all rules for a given user and target date.

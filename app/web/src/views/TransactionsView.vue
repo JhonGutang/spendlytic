@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useTransactionStore } from '../stores/transactionStore';
 import { useCategoryStore } from '../stores/categoryStore';
-import { Plus, Pencil, Trash2, Sparkles } from 'lucide-vue-next';
+import { Plus, Pencil, Trash2, Sparkles, BrainCircuit } from 'lucide-vue-next';
 import type { Transaction, TransactionFormData } from '../types';
 import RuleEvaluationModal from '@/components/RuleEvaluationModal.vue';
+import { useFeedbackStore } from '@/stores/feedbackStore';
 import { formatDateSafe } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -36,6 +38,13 @@ import { Textarea } from '@/components/ui/textarea';
 
 const transactionStore = useTransactionStore();
 const categoryStore = useCategoryStore();
+const feedbackStore = useFeedbackStore();
+const router = useRouter();
+
+// Fetch progress on mount so we know the evaluation status
+onMounted(async () => {
+  await feedbackStore.fetchProgress();
+});
 
 const showModal = ref(false);
 const editingTransaction = ref<Transaction | null>(null);
@@ -123,7 +132,33 @@ async function handleDelete(id: number) {
   }
 }
 
+const needsReevaluation = computed(() => {
+  if (!feedbackStore.hasEvaluatedThisWeek) return true;
+  
+  const currentProgress = feedbackStore.currentProgress;
+  if (!currentProgress) return true;
+
+  // Get current week's transactions
+  const mondayStr = feedbackStore.currentWeekMonday;
+  if (!mondayStr) return true;
+  
+  const currentWeekTransactions = transactionStore.transactions.filter(t => t.date >= mondayStr);
+  
+  // If any transaction was updated after the progress record, we need re-evaluation
+  const progressUpdatedAt = new Date(currentProgress.updated_at).getTime();
+  
+  return currentWeekTransactions.some(t => {
+    const updatedAt = new Date(t.updated_at || t.created_at).getTime();
+    return updatedAt > progressUpdatedAt;
+  });
+});
+
 function openRuleEvaluation() {
+  if (!needsReevaluation.value && feedbackStore.hasEvaluatedThisWeek) {
+    // Redirect to insights if already evaluated and no changes
+    router.push('/insights');
+    return;
+  }
   ruleEvaluationModal.value?.open();
 }
 
@@ -145,6 +180,7 @@ onMounted(async () => {
   await Promise.all([
     transactionStore.fetchTransactions(),
     categoryStore.fetchCategories(),
+    feedbackStore.fetchProgress(),
   ]);
 });
 </script>
@@ -158,9 +194,15 @@ onMounted(async () => {
         <p class="text-slate-600 mt-1">Manage your income and expenses</p>
       </div>
       <div class="flex items-center gap-3">
-        <Button variant="outline" @click="openRuleEvaluation" class="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800">
-          <Sparkles class="w-4 h-4" />
-          Evaluate
+        <Button 
+          variant="outline" 
+          @click="openRuleEvaluation" 
+          :title="!needsReevaluation ? 'Evaluation is up to date' : 'Analyze spending behavior'"
+          class="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800"
+        >
+          <Sparkles v-if="needsReevaluation" class="w-4 h-4" />
+          <BrainCircuit v-else class="w-4 h-4" />
+          {{ !feedbackStore.hasEvaluatedThisWeek ? 'Evaluate' : (needsReevaluation ? 'Re-evaluate' : 'View Insights') }}
         </Button>
         <Button @click="openCreateModal" class="gap-2">
           <Plus class="w-5 h-5" />

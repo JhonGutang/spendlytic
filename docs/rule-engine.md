@@ -184,10 +184,12 @@ Feedback Generation (see finance-habit-tracker.md)
 
 ### Evaluation Timing
 
-Rules are evaluated:
-1. **On-demand:** When user requests current status
-2. **After transaction:** When new transaction is added
-3. **Scheduled:** Weekly summary generation (optional)
+In the current implementation, rules are evaluated:
+1. **On-demand (API-driven):** Triggered by the frontend via `GET /api/rule-engine/evaluate`.
+2. **Dashboard Initialization:** When a user visits the Insights or Dashboard view.
+
+> [!NOTE]
+> **Real-time Observers**: While the system is designed to support Laravel Model Observers (triggering on every transaction save), this is currently **not active** in the MVP to minimize feedback fatigue.
 
 ### Week Definition
 

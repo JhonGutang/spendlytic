@@ -169,4 +169,15 @@ class TransactionRepository
             'category_totals' => $categoryTotals,
         ];
     }
+
+    /**
+     * Get the latest update timestamp for transactions in a date range.
+     */
+    public function getLastUpdateTimestamp(int $userId, string $startDate, string $endDate): ?string
+    {
+        return Transaction::where('user_id', $userId)
+            ->whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
+            ->max('updated_at');
+    }
 }

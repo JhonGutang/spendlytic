@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router';
-import { LayoutDashboard, Receipt, Menu, LogOut, User, Settings, ChevronsUpDown } from 'lucide-vue-next';
+import { LayoutDashboard, Receipt, Menu, LogOut, User, Settings, ChevronsUpDown, BrainCircuit } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/authStore';
 import { computed, ref } from 'vue';
 import {
@@ -51,6 +51,12 @@ const navItems = [
     icon: LayoutDashboard,
     label: 'Dashboard',
     exact: true,
+  },
+  {
+    to: '/insights',
+    icon: BrainCircuit,
+    label: 'Insights',
+    exact: false,
   },
   {
     to: '/transactions',

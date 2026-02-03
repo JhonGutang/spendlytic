@@ -34,4 +34,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rule Engine routes
     Route::get('/rules/evaluate', [RuleEngineController::class, 'evaluate']);
+
+    // Feedback routes
+    Route::get('/feedback', [\App\Http\Controllers\Api\FeedbackController::class, 'index']);
+    Route::get('/feedback/progress', [\App\Http\Controllers\Api\FeedbackController::class, 'progress']);
+    Route::post('/feedback/{id}/acknowledge', [\App\Http\Controllers\Api\FeedbackController::class, 'acknowledge']);
 });

@@ -12,21 +12,23 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
-  AlertTriangle, 
+  Sparkles, 
   CheckCircle2, 
-  TrendingUp, 
-  ArrowUpRight, 
-  Coffee,
   Loader2,
-  Sparkles
+  TrendingUp,
+  ArrowUpRight,
+  Coffee,
+  AlertTriangle
 } from 'lucide-vue-next';
-import { ruleEngineApi } from '@/services/api.service';
-import type { RuleEvaluation } from '@/types';
+import { useFeedbackStore } from '@/stores/feedbackStore';
+import type { EvaluationResponse } from '@/types';
 
 const isOpen = ref(false);
 const loading = ref(false);
-const results = ref<RuleEvaluation | null>(null);
+const results = ref<EvaluationResponse | null>(null);
 const error = ref<string | null>(null);
+
+const feedbackStore = useFeedbackStore();
 
 async function runEvaluation() {
   isOpen.value = true;
@@ -35,9 +37,7 @@ async function runEvaluation() {
   results.value = null;
 
   try {
-    // For demo purposes, we can pass Jan 20, 2026 if it's the demo user
-    // In a real app, this would use the current user's current date
-    const response = await ruleEngineApi.evaluate();
+    const response = await feedbackStore.evaluateRules();
     results.value = response;
   } catch (err) {
     error.value = 'Failed to analyze spending behavior. Please try again.';
@@ -119,7 +119,7 @@ function getRuleColor(ruleId: string) {
 
           <!-- Results State -->
           <div v-else-if="results" class="space-y-4">
-            <div v-if="results.triggered_rules.length === 0" class="py-12 text-center space-y-4">
+            <div v-if="results.evaluation.triggered_rules.length === 0" class="py-12 text-center space-y-4">
                 <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 class="w-8 h-8" />
                 </div>
@@ -131,7 +131,7 @@ function getRuleColor(ruleId: string) {
 
             <div v-else class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               <Card 
-                v-for="rule in results.triggered_rules" 
+                v-for="rule in results.evaluation.triggered_rules" 
                 :key="rule.rule_id"
                 class="border-slate-200 overflow-hidden"
               >
@@ -195,7 +195,7 @@ function getRuleColor(ruleId: string) {
 
           <DialogFooter class="mt-8">
             <Button variant="outline" @click="isOpen = false">Close</Button>
-            <Button v-if="results && results.triggered_rules.length > 0" class="bg-blue-600 hover:bg-blue-700">
+            <Button v-if="results && results.evaluation.triggered_rules.length > 0" class="bg-blue-600 hover:bg-blue-700">
               Create Savings Plan
             </Button>
           </DialogFooter>
