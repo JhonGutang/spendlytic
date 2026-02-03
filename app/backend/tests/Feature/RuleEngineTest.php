@@ -21,7 +21,10 @@ test('rule engine returns empty triggers for new user (no history)', function ()
     $response->assertStatus(200)
         ->assertJson([
             'data' => [
-                'triggered_rules' => []
+                'evaluation' => [
+                    'triggered_rules' => []
+                ],
+                'feedback' => []
             ]
         ]);
 });
@@ -42,7 +45,7 @@ test('Rule 1: triggers category overspend when WoW increase > 25%', function () 
     $response = $this->getJson('/api/rules/evaluate?date=2026-01-20');
 
     $response->assertStatus(200);
-    $triggered = collect($response->json('data.triggered_rules'));
+    $triggered = collect($response->json('data.evaluation.triggered_rules'));
     
     $rule = $triggered->firstWhere('rule_id', 'category_overspend');
     expect($rule)->not->toBeNull()
@@ -65,7 +68,7 @@ test('Rule 2: triggers weekly spending spike when WoW increase > 20%', function 
 
     $response = $this->getJson('/api/rules/evaluate?date=2026-01-20');
 
-    $triggered = collect($response->json('data.triggered_rules'));
+    $triggered = collect($response->json('data.evaluation.triggered_rules'));
     $rule = $triggered->firstWhere('rule_id', 'weekly_spending_spike');
     
     expect($rule)->not->toBeNull()
@@ -84,7 +87,7 @@ test('Rule 3: triggers frequent small purchases when count >= 10 and amount < 10
 
     $response = $this->getJson('/api/rules/evaluate?date=2026-01-20');
 
-    $triggered = collect($response->json('data.triggered_rules'));
+    $triggered = collect($response->json('data.evaluation.triggered_rules'));
     $rule = $triggered->firstWhere('rule_id', 'frequent_small_purchases');
     
     expect($rule)->not->toBeNull()
@@ -104,7 +107,7 @@ test('does not trigger category overspend if previous week was zero', function (
 
     $response = $this->getJson('/api/rules/evaluate?date=2026-01-20');
 
-    $triggered = collect($response->json('data.triggered_rules'));
+    $triggered = collect($response->json('data.evaluation.triggered_rules'));
     expect($triggered->firstWhere('rule_id', 'category_overspend'))->toBeNull();
 });
 
@@ -114,11 +117,11 @@ test('it works with the demo seeder data', function () {
     $user = User::where('email', 'demo@example.com')->first();
     Sanctum::actingAs($user);
 
-    // Evaluation date from the seeder is Jan 20, 2026
-    $response = $this->getJson('/api/rules/evaluate?date=2026-01-20');
+    // Use default current date as set by seeder
+    $response = $this->getJson('/api/rules/evaluate');
 
     $response->assertStatus(200);
-    $triggered = collect($response->json('data.triggered_rules'));
+    $triggered = collect($response->json('data.evaluation.triggered_rules'));
 
     // Check all three rules are triggered as per seeder design
     expect($triggered->where('rule_id', 'category_overspend')->count())->toBeGreaterThan(0)

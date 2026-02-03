@@ -8,7 +8,7 @@ import type {
   TransactionFormData,
   CategoryFormData,
   AnalyticsData,
-  RuleEvaluation,
+  EvaluationResponse,
 } from '../types';
 
 // Category API
@@ -121,10 +121,29 @@ export const apiService = {
 
 // Rule Engine API
 export const ruleEngineApi = {
-  evaluate: async (date?: string): Promise<RuleEvaluation> => {
+  evaluate: async (date?: string): Promise<EvaluationResponse> => {
     const params = date ? { date } : {};
-    const response = await apiClient.get<ApiResponse<RuleEvaluation>>('/rules/evaluate', { params });
+    const response = await apiClient.get<ApiResponse<EvaluationResponse>>('/rules/evaluate', { params });
     if (!response.data.data) throw new Error('Failed to evaluate rules');
     return response.data.data;
   },
 };
+
+// Feedback API
+export const feedbackApi = {
+  getAll: async (): Promise<import('../types').FeedbackHistory[]> => {
+    const response = await apiClient.get<ApiResponse<import('../types').FeedbackHistory[]>>('/feedback');
+    return response.data.data || [];
+  },
+
+  getProgress: async (): Promise<import('../types').UserProgress[]> => {
+    const response = await apiClient.get<ApiResponse<import('../types').UserProgress[]>>('/feedback/progress');
+    return response.data.data || [];
+  },
+
+  acknowledge: async (id: number): Promise<boolean> => {
+    const response = await apiClient.post<ApiResponse<any>>(`/feedback/${id}/acknowledge`);
+    return !!response.data.success;
+  },
+};
+

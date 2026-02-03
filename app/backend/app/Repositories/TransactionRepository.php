@@ -142,7 +142,8 @@ class TransactionRepository
     public function getWeeklySummary(int $userId, string $startDate, string $endDate): array
     {
         $baseQuery = Transaction::where('transactions.user_id', $userId)
-            ->whereBetween('transactions.date', [$startDate, $endDate])
+            ->whereDate('transactions.date', '>=', $startDate)
+            ->whereDate('transactions.date', '<=', $endDate)
             ->where('transactions.type', 'expense');
 
         $totalExpenses = (clone $baseQuery)->sum('transactions.amount');
@@ -168,5 +169,16 @@ class TransactionRepository
             'small_transaction_total' => (float) $smallTransactionTotal,
             'category_totals' => $categoryTotals,
         ];
+    }
+
+    /**
+     * Get the latest update timestamp for transactions in a date range.
+     */
+    public function getLastUpdateTimestamp(int $userId, string $startDate, string $endDate): ?string
+    {
+        return Transaction::where('user_id', $userId)
+            ->whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
+            ->max('updated_at');
     }
 }

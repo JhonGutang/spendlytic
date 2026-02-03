@@ -10,6 +10,7 @@ import { formatDateSafe } from '@/utils';
 import DailyFlowChart from '@/components/charts/DailyFlowChart.vue';
 import MonthlyFlowChart from '@/components/charts/MonthlyFlowChart.vue';
 import YearlyFlowChart from '@/components/charts/YearlyFlowChart.vue';
+import BehavioralInsights from '@/components/feedback/BehavioralInsights.vue';
 import type { TimeRange } from '@/types';
 
 const transactionStore = useTransactionStore();
@@ -110,6 +111,9 @@ onMounted(async () => {
         </CardContent>
       </Card>
     </div>
+
+    <!-- Behavioral Insights Section -->
+    <BehavioralInsights />
 
     <!-- Money Flow Charts -->
     <Card>
