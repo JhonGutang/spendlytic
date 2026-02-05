@@ -44,7 +44,7 @@ class FeedbackEngineService
             $template = FeedbackTemplateLibrary::getTemplate($ruleId, $level);
             
             if ($template) {
-                $feedbackData = $this->fillTemplate($template, $ruleResult['data']);
+                $feedbackData = $this->fillTemplate($template, $ruleResult['data'], $userId);
                 
                 $feedback = $this->feedbackHistoryRepository->updateOrCreate(
                     [
@@ -164,37 +164,86 @@ class FeedbackEngineService
     }
 
     /**
-     * Fill template placeholders with actual data.
+     * Fill template placeholders with actual data, calculating advanced metrics if needed.
      */
-    private function fillTemplate(array $template, array $data): array
+    private function fillTemplate(array $template, array $data, int $userId): array
     {
         $explanation = $template['explanation'];
         $suggestion = $template['suggestion'];
+        $ruleId = $template['rule_id'];
+        $level = $template['level'];
+        
+        // Enrich data for advanced templates if needed
+        if ($level === 'advanced') {
+            $data = $this->enrichAdvancedData($data, $ruleId, $userId);
+        }
         
         foreach ($template['placeholders'] as $placeholder) {
-            $value = $data[$placeholder] ?? '';
+            $value = $data[$placeholder] ?? null;
             
             // Special derivation for target_amount if not in raw data
-            if ($placeholder === 'target_amount' && empty($value)) {
+            if ($placeholder === 'target_amount' && ($value === null || $value === '')) {
                 $current = $data['current_week_amount'] ?? $data['current_week_total'] ?? 0;
                 $value = (float)$current * 0.9; // Suggest 10% reduction
             }
 
+            // Fallback for placeholders that might be missing after enrichment
+            if ($value === null) {
+                $value = '[N/A]'; 
+            }
+
             // Basic formatting
-            if (str_contains($placeholder, 'amount') || str_contains($placeholder, 'total')) {
-                $value = '$' . number_format((float)$value, 2);
+            if (str_contains($placeholder, 'amount') || str_contains($placeholder, 'total') || str_contains($placeholder, 'average') || str_contains($placeholder, 'limit') || str_contains($placeholder, 'budget') || str_contains($placeholder, 'target')) {
+                if (is_numeric($value)) {
+                    $value = '$' . number_format((float)$value, 2);
+                }
             } elseif (str_contains($placeholder, 'percentage')) {
-                // Templates already have the % sign, so just format the number
-                $value = number_format((float)$value, 2);
+                if (is_numeric($value)) {
+                    $value = number_format((float)$value, 2);
+                }
             }
             
-            $explanation = str_replace('${' . $placeholder . '}', $value, $explanation);
-            $suggestion = str_replace('${' . $placeholder . '}', $value, $suggestion);
+            $explanation = str_replace('${' . $placeholder . '}', (string)$value, $explanation);
+            $suggestion = str_replace('${' . $placeholder . '}', (string)$value, $suggestion);
         }
         
         return [
             'explanation' => $explanation,
             'suggestion' => $suggestion,
         ];
+    }
+
+    /**
+     * Enrich data with historical calculations for advanced feedback.
+     */
+    private function enrichAdvancedData(array $data, string $ruleId, int $userId): array
+    {
+        // Get last 4 weeks of feedback history for this rule
+        $history = \App\Models\FeedbackHistory::where('user_id', $userId)
+            ->where('rule_id', $ruleId)
+            ->orderBy('week_start', 'desc')
+            ->limit(4)
+            ->get();
+
+        if ($ruleId === 'category_overspend') {
+            $category = $data['category'] ?? null;
+            if ($category) {
+                $categoryHistory = $history->filter(fn($f) => ($f->data['category'] ?? null) === $category);
+                $amounts = $categoryHistory->map(fn($f) => $f->data['current_week_amount'] ?? 0)->push($data['current_week_amount'] ?? 0);
+                $data['four_week_average'] = $amounts->avg();
+            }
+        } elseif ($ruleId === 'weekly_spending_spike') {
+            $totals = $history->map(fn($f) => $f->data['current_week_total'] ?? 0)->push($data['current_week_total'] ?? 0);
+            $data['four_week_average'] = $totals->avg();
+        } elseif ($ruleId === 'frequent_small_purchases') {
+            $amounts = $data['small_purchase_amounts'] ?? []; // Assuming this might be passed or calculated
+            if (!empty($amounts)) {
+                $data['average_amount'] = array_sum($amounts) / count($amounts);
+            } else {
+                $data['average_amount'] = ($data['total_amount'] ?? 0) / ($data['transaction_count'] ?? 1);
+            }
+        }
+
+        return $data;
     }
 }

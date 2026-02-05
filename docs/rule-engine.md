@@ -222,6 +222,85 @@ In the current implementation, rules are evaluated:
 
 ---
 
+## 🔄 Adaptive Feedback Logic (MVP Refinement)
+
+The system now implements two levels of feedback that adapt based on user behavior over time.
+
+### Feedback Levels
+
+1.  **Basic Level**: Targeted at users who are struggling with a specific rule (triggered 2+ weeks in a row) or new users. Focuses on simple, direct actions.
+2.  **Advanced Level**: Targeted at users who have shown improvement (rule NOT triggered for 2+ weeks in a row). Focuses on historical context and optimization.
+
+### Advanced Metric Enrichment
+
+To support advanced feedback, the `FeedbackEngineService` now calculates additional metrics on-the-fly:
+
+| Metric | Rule | Calculation |
+| :--- | :--- | :--- |
+| **4-Week Average** | Category Overspend | Average spending in that category over the last 4 successful/failed weeks. |
+| **Baseline 4-Week average** | Weekly Spike | Average total weekly spending over the last month. |
+| **Average Small Purchase** | Frequent Small Purchases | Sum of small purchases / count of small purchases. |
+
+---
+
+## Testing Approach
+
+### Unit Tests
+
+Each rule should have comprehensive unit tests covering:
+
+1. **Happy Path:** Rule triggers correctly when conditions are met
+2. **No Trigger:** Rule does not trigger when conditions are not met
+3. **Edge Cases:** Boundary conditions, zero values, missing data
+4. **Data Validation:** Invalid inputs are handled gracefully
+
+#### Example Test Cases
+
+**Category Overspend:**
+```typescript
+describe('Category Overspend Rule', () => {
+  test('triggers when spending increases by 25%+', () => {
+    const previous = createWeeklySummary({ 'Food': 200 });
+    const current = createWeeklySummary({ 'Food': 260 });
+    const result = checkCategoryOverspend(current, previous);
+    expect(result.triggered).toBe(true);
+  });
+  
+  test('does not trigger when spending increases by less than 25%', () => {
+    const previous = createWeeklySummary({ 'Food': 200 });
+    const current = createWeeklySummary({ 'Food': 240 });
+    const result = checkCategoryOverspend(current, previous);
+    expect(result.triggered).toBe(false);
+  });
+  
+  test('does not trigger when previous week has zero spending', () => {
+    const previous = createWeeklySummary({ 'Food': 0 });
+    const current = createWeeklySummary({ 'Food': 100 });
+    const result = checkCategoryOverspend(current, previous);
+    expect(result.triggered).toBe(false);
+  });
+});
+```
+
+### Integration Tests
+
+Test the complete rule evaluation flow:
+- Load transaction data
+- Generate weekly summaries
+- Evaluate all rules
+- Verify correct rules trigger
+- Verify feedback generation (see finance-habit-tracker.md)
+
+### Test Data
+
+Create realistic test datasets:
+- **Baseline Week:** Normal spending patterns
+- **Spike Week:** Significant increases
+- **Small Purchases Week:** Many small transactions
+- **Mixed Week:** Multiple rules trigger
+
+---
+
 ## Implementation Details
 
 ### Data Structures

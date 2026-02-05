@@ -2,7 +2,8 @@
 import { onMounted } from 'vue';
 import { useFeedbackStore } from '@/stores/feedbackStore';
 import InsightTimeline from '@/components/feedback/InsightTimeline.vue';
-import { BrainCircuit, Trophy, History } from 'lucide-vue-next';
+import ProgressTrendChart from '@/components/charts/ProgressTrendChart.vue';
+import { BrainCircuit, Trophy, History, TrendingUp } from 'lucide-vue-next';
 
 const feedbackStore = useFeedbackStore();
 
@@ -42,6 +43,26 @@ function getScoreColor(score: number) {
         <div class="p-3 rounded-xl bg-yellow-50">
           <Trophy class="w-6 h-6 text-yellow-500" />
         </div>
+      </div>
+    </div>
+
+    <!-- Progress Over Time Chart -->
+    <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm overflow-hidden relative">
+      <div class="flex items-center gap-2 mb-8">
+        <div class="p-2 rounded-lg bg-indigo-50">
+          <TrendingUp class="w-5 h-5 text-indigo-600" />
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Progress Over Time</h2>
+          <p class="text-xs text-slate-500">Your behavioral improvement score history</p>
+        </div>
+      </div>
+      
+      <div class="h-[300px]">
+        <ProgressTrendChart 
+          :progress-history="feedbackStore.progressHistory"
+          :loading="feedbackStore.loading"
+        />
       </div>
     </div>
 
