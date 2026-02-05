@@ -1,7 +1,7 @@
 # Spendlytic: Finance Behavioral System
 
-> **Current Phase:** MVP - Adaptive Feedback Engine  
-> **Status:** Initial Development
+> **Current Phase:** MVP - Refinement  
+> **Status:** Behavioral Features & CSV Support Implemented
 
 ---
 
@@ -21,7 +21,7 @@ An engineering-focused finance tracker that explores how **deterministic feedbac
 - Adaptive feedback that evolves with user progress
 - Dashboard/CLI output for viewing results
 
-**Reference:** See [`docs/low-concept.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/low-concept.md) for MVP overview and [`docs/finance-tracking.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/finance-tracking.md) for detailed system design.
+**Reference:** See [`docs/low-concept.md`](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/low-concept.md) for MVP overview and [`docs/finance-tracking.md`](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/finance-tracking.md) for detailed system design.
 
 ### Future Roadmap
 
@@ -130,7 +130,7 @@ View → Component → Composable → Store → Service → Model
 > **Type Checking:** Before running ANY command (build, dev, test, etc.), ALWAYS run `npm run type-check` first to ensure there are no TypeScript errors. Never proceed with commands if type errors exist.
 
 > [!NOTE]
-> See [`docs/finance-tracking.md`](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/finance-tracking.md) for detailed architecture decisions and layer responsibilities.
+> See [`docs/finance-tracking.md`](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/finance-tracking.md) for detailed architecture decisions and layer responsibilities.
 
 ---
 
@@ -189,4 +189,4 @@ View → Component → Composable → Store → Service → Model
 - **[date-formatter.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/date-formatter.md)** - Date formatting utility documentation
 
 **Future Reference (NOT for MVP):**
-- **[mid-concept.md](file:///c:/Users/jhonb/Documents/Websites/finance-behavioral-system/docs/mid-concept.md)** - Extended concept and design philosophy (advanced features)
+- **[mid-concept.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/mid-concept.md)** - Extended concept and design philosophy (advanced features)
