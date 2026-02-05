@@ -27,19 +27,19 @@ class TransactionRepository
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc');
 
-        if (!empty($filters['type'])) {
+        if (! empty($filters['type'])) {
             $query->where('type', $filters['type']);
         }
 
-        if (!empty($filters['category_id'])) {
+        if (! empty($filters['category_id'])) {
             $query->where('category_id', $filters['category_id']);
         }
 
-        if (!empty($filters['start_date'])) {
+        if (! empty($filters['start_date'])) {
             $query->whereDate('date', '>=', $filters['start_date']);
         }
 
-        if (!empty($filters['end_date'])) {
+        if (! empty($filters['end_date'])) {
             $query->whereDate('date', '<=', $filters['end_date']);
         }
 
@@ -116,8 +116,8 @@ class TransactionRepository
     public function update(int $id, int $userId, array $data): bool
     {
         $transaction = $this->getById($id, $userId);
-        
-        if (!$transaction) {
+
+        if (! $transaction) {
             return false;
         }
 
@@ -130,8 +130,8 @@ class TransactionRepository
     public function delete(int $id, int $userId): bool
     {
         $transaction = $this->getById($id, $userId);
-        
-        if (!$transaction) {
+
+        if (! $transaction) {
             return false;
         }
 
@@ -144,7 +144,7 @@ class TransactionRepository
     public function getSummary(int $userId): array
     {
         $query = Transaction::where('user_id', $userId);
-        
+
         $income = (clone $query)->where('type', 'income')->sum('amount');
         $expenses = (clone $query)->where('type', 'expense')->sum('amount');
 
@@ -183,14 +183,14 @@ class TransactionRepository
         $totalExpenses = (clone $baseQuery)->sum('transactions.amount');
         $transactionCount = (clone $baseQuery)->count();
         $smallTransactionCount = (clone $baseQuery)->where('transactions.amount', '<', 10)->count();
-        
+
         $categoryTotals = (clone $baseQuery)
             ->join('categories', 'transactions.category_id', '=', 'categories.id')
             ->select('categories.name as category_name', DB::raw('SUM(transactions.amount) as total'))
             ->groupBy('categories.name')
             ->get()
             ->pluck('total', 'category_name')
-            ->map(fn($total) => (float) $total)
+            ->map(fn ($total) => (float) $total)
             ->toArray();
 
         // Also get total amount for small transactions as needed for Rule 3 metadata

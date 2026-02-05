@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Category;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -38,7 +38,7 @@ class TransactionImportTest extends TestCase
             ->assertJsonCount(2, 'data')
             ->assertJsonPath('data.0.data.category_name', 'Food')
             ->assertJsonPath('data.1.data.type', 'income');
-            
+
         // Verify category was auto-created or found
         $this->assertDatabaseHas('categories', ['name' => 'Food', 'user_id' => $this->user->id]);
     }
@@ -46,7 +46,7 @@ class TransactionImportTest extends TestCase
     public function test_detects_duplicates_during_preview()
     {
         $category = Category::factory()->create(['name' => 'Groceries', 'user_id' => $this->user->id, 'type' => 'expense']);
-        
+
         Transaction::create([
             'user_id' => $this->user->id,
             'category_id' => $category->id,
@@ -75,7 +75,7 @@ class TransactionImportTest extends TestCase
     public function test_can_confirm_import()
     {
         $category = Category::factory()->create(['name' => 'Rent', 'user_id' => $this->user->id, 'type' => 'expense']);
-        
+
         $items = [
             [
                 'skip' => false,
@@ -84,8 +84,8 @@ class TransactionImportTest extends TestCase
                     'category_id' => $category->id,
                     'description' => 'Feb Rent',
                     'amount' => 1200.00,
-                    'type' => 'expense'
-                ]
+                    'type' => 'expense',
+                ],
             ],
             [
                 'skip' => true,
@@ -94,9 +94,9 @@ class TransactionImportTest extends TestCase
                     'category_id' => $category->id,
                     'description' => 'Jan Rent',
                     'amount' => 1200.00,
-                    'type' => 'expense'
-                ]
-            ]
+                    'type' => 'expense',
+                ],
+            ],
         ];
 
         $response = $this->actingAs($this->user)
@@ -110,12 +110,12 @@ class TransactionImportTest extends TestCase
 
         $this->assertDatabaseHas('transactions', [
             'description' => 'Feb Rent',
-            'user_id' => $this->user->id
+            'user_id' => $this->user->id,
         ]);
-        
+
         $this->assertDatabaseMissing('transactions', [
             'description' => 'Jan Rent',
-            'user_id' => $this->user->id
+            'user_id' => $this->user->id,
         ]);
     }
 }

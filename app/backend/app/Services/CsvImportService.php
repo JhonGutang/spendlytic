@@ -6,10 +6,8 @@ use App\Models\Category;
 use App\Models\Transaction;
 use App\Repositories\CategoryRepository;
 use App\Repositories\TransactionRepository;
-use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 
 class CsvImportService
 {
@@ -29,10 +27,10 @@ class CsvImportService
         foreach ($rows as $index => $row) {
             try {
                 $validated = $this->validateRow($row);
-                
+
                 // Find or create category if name is provided
                 $category = $this->findOrCreateCategory($validated['category'], $validated['type'], $userId);
-                
+
                 $data = [
                     'date' => $validated['date'],
                     'category_id' => $category->id,
@@ -74,6 +72,7 @@ class CsvImportService
         foreach ($items as $item) {
             if ($item['skip'] ?? false) {
                 $skippedCount++;
+
                 continue;
             }
 
@@ -95,10 +94,12 @@ class CsvImportService
         $path = $file->getRealPath();
         $handle = fopen($path, 'r');
         $headers = fgetcsv($handle); // First row as headers
-        
+
         $rows = [];
         while (($data = fgetcsv($handle)) !== false) {
-            if (count($headers) !== count($data)) continue;
+            if (count($headers) !== count($data)) {
+                continue;
+            }
             $rows[] = array_combine($headers, $data);
         }
         fclose($handle);
@@ -136,7 +137,7 @@ class CsvImportService
             })
             ->first();
 
-        if (!$category) {
+        if (! $category) {
             // Create a new user-specific category
             $category = $this->categoryRepository->create([
                 'name' => $name,

@@ -6,6 +6,7 @@ import {
   useEvaluateRules,
   useAcknowledgeFeedback,
 } from '../composables/useFeedback';
+import type { EvaluationResponse } from '../types';
 
 /**
  * Feedback Store
@@ -82,8 +83,8 @@ export const useFeedbackStore = defineStore('feedback', () => {
     await progressQuery.refetch();
   }
 
-  async function evaluateRules(date?: string) {
-    return new Promise((resolve, reject) => {
+  async function evaluateRules(date?: string): Promise<EvaluationResponse> {
+    return new Promise<EvaluationResponse>((resolve, reject) => {
       evaluateMutation.mutate(date, {
         onSuccess: (data: any) => resolve(data),
         onError: (err: any) => reject(err),

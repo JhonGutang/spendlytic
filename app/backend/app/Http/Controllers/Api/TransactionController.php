@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\TransactionService;
 use App\Services\AnalyticsService;
 use App\Services\CsvImportService;
+use App\Services\TransactionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -24,7 +24,7 @@ class TransactionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $userId = $request->user()->id;
-        
+
         $filters = [
             'type' => $request->query('type'),
             'category_id' => $request->query('category_id'),
@@ -78,7 +78,7 @@ class TransactionController extends Controller
     {
         $transaction = $this->transactionService->getTransactionById($id, $request->user()->id);
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
                 'message' => 'Transaction not found',
@@ -100,7 +100,7 @@ class TransactionController extends Controller
             $userId = $request->user()->id;
             $updated = $this->transactionService->updateTransaction($id, $userId, $request->all());
 
-            if (!$updated) {
+            if (! $updated) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Transaction not found',
@@ -129,7 +129,7 @@ class TransactionController extends Controller
         $userId = $request->user()->id;
         $deleted = $this->transactionService->deleteTransaction($id, $userId);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'success' => false,
                 'message' => 'Transaction not found',
