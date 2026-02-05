@@ -44,7 +44,7 @@ class FeedbackEngineService
             $template = FeedbackTemplateLibrary::getTemplate($ruleId, $level);
             
             if ($template) {
-                $feedbackData = $this->fillTemplate($template, $ruleResult['data'], $userId);
+                $feedbackData = $this->fillTemplate($template, $ruleResult['data'], $userId, $ruleId, $level);
                 
                 $feedback = $this->feedbackHistoryRepository->updateOrCreate(
                     [
@@ -166,12 +166,10 @@ class FeedbackEngineService
     /**
      * Fill template placeholders with actual data, calculating advanced metrics if needed.
      */
-    private function fillTemplate(array $template, array $data, int $userId): array
+    private function fillTemplate(array $template, array $data, int $userId, string $ruleId, string $level): array
     {
         $explanation = $template['explanation'];
         $suggestion = $template['suggestion'];
-        $ruleId = $template['rule_id'];
-        $level = $template['level'];
         
         // Enrich data for advanced templates if needed
         if ($level === 'advanced') {
@@ -195,7 +193,7 @@ class FeedbackEngineService
             // Basic formatting
             if (str_contains($placeholder, 'amount') || str_contains($placeholder, 'total') || str_contains($placeholder, 'average') || str_contains($placeholder, 'limit') || str_contains($placeholder, 'budget') || str_contains($placeholder, 'target')) {
                 if (is_numeric($value)) {
-                    $value = '$' . number_format((float)$value, 2);
+                    $value = '₱' . number_format((float)$value, 2);
                 }
             } elseif (str_contains($placeholder, 'percentage')) {
                 if (is_numeric($value)) {

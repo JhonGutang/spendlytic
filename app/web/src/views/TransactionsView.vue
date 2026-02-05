@@ -218,6 +218,109 @@ onMounted(async () => {
       </div>
     </div>
 
+    <!-- Filters -->
+    <Card class="border-slate-200 shadow-sm">
+      <CardContent class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div class="space-y-2">
+            <Label class="text-xs uppercase text-slate-500 font-bold">Type</Label>
+            <Select 
+              :model-value="transactionStore.queryParams.type || 'all'" 
+              @update:model-value="v => transactionStore.fetchTransactions({ type: v === 'all' ? undefined : v as any, page: 1 })"
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All Types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="income">Income</SelectItem>
+                <SelectItem value="expense">Expense</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div class="space-y-2">
+            <Label class="text-xs uppercase text-slate-500 font-bold">Category</Label>
+            <Select 
+              :model-value="transactionStore.queryParams.category_id?.toString() || 'all'" 
+              @update:model-value="(v: any) => transactionStore.fetchTransactions({ category_id: v === 'all' ? undefined : parseInt(v), page: 1 })"
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem 
+                  v-for="cat in categoryStore.categories" 
+                  :key="cat.id" 
+                  :value="cat.id.toString()"
+                >
+                  {{ cat.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div class="space-y-2">
+            <Label class="text-xs uppercase text-slate-500 font-bold">Start Date</Label>
+            <Input 
+              type="date" 
+              :model-value="transactionStore.queryParams.start_date" 
+              @input="(e: Event) => transactionStore.fetchTransactions({ start_date: (e.target as HTMLInputElement).value || undefined, page: 1 })"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <Label class="text-xs uppercase text-slate-500 font-bold">End Date</Label>
+            <Input 
+              type="date" 
+              :model-value="transactionStore.queryParams.end_date" 
+              @input="(e: Event) => transactionStore.fetchTransactions({ end_date: (e.target as HTMLInputElement).value || undefined, page: 1 })"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <Label class="text-xs uppercase text-slate-500 font-bold">Min Amount</Label>
+            <Input 
+              type="number" 
+              placeholder="0.00"
+              :model-value="transactionStore.queryParams.min_amount" 
+              @input="(e: Event) => transactionStore.fetchTransactions({ min_amount: (e.target as HTMLInputElement).value ? parseFloat((e.target as HTMLInputElement).value) : undefined, page: 1 })"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <Label class="text-xs uppercase text-slate-500 font-bold">Max Amount</Label>
+            <Input 
+              type="number" 
+              placeholder="999..."
+              :model-value="transactionStore.queryParams.max_amount" 
+              @input="(e: Event) => transactionStore.fetchTransactions({ max_amount: (e.target as HTMLInputElement).value ? parseFloat((e.target as HTMLInputElement).value) : undefined, page: 1 })"
+            />
+          </div>
+        </div>
+        
+        <div class="flex justify-end mt-4 pt-4 border-t border-slate-100">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            class="text-slate-500 hover:text-slate-700"
+            @click="transactionStore.fetchTransactions({ 
+              type: undefined, 
+              category_id: undefined, 
+              start_date: undefined, 
+              end_date: undefined, 
+              min_amount: undefined, 
+              max_amount: undefined, 
+              page: 1 
+            })"
+          >
+            Reset Filters
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+
     <!-- Transactions List -->
     <Card>
       <CardContent class="p-0">
@@ -279,7 +382,7 @@ onMounted(async () => {
                       transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
                     ]"
                   >
-                    {{ transaction.type === 'income' ? '+' : '-' }}${{ transaction.amount }}
+                    {{ transaction.type === 'income' ? '+' : '-' }}₱{{ transaction.amount }}
                   </span>
                 </TableCell>
                 <TableCell class="text-right">
@@ -304,6 +407,47 @@ onMounted(async () => {
               </TableRow>
             </TableBody>
           </Table>
+        </div>
+
+        <!-- Pagination -->
+        <div v-if="transactionStore.paginationMeta.last_page > 1" class="p-4 border-t border-slate-100 flex items-center justify-between">
+          <p class="text-sm text-slate-500">
+            Showing <span class="font-medium">{{ transactionStore.paginationMeta.total > 0 ? (transactionStore.paginationMeta.current_page - 1) * transactionStore.paginationMeta.per_page + 1 : 0 }}</span>
+            to <span class="font-medium">{{ Math.min(transactionStore.paginationMeta.current_page * transactionStore.paginationMeta.per_page, transactionStore.paginationMeta.total) }}</span>
+            of <span class="font-medium">{{ transactionStore.paginationMeta.total }}</span> results
+          </p>
+          <div class="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              :disabled="transactionStore.paginationMeta.current_page === 1"
+              @click="transactionStore.goToPage(transactionStore.paginationMeta.current_page - 1)"
+            >
+              Previous
+            </Button>
+            
+            <div class="flex items-center gap-1">
+              <Button 
+                v-for="page in transactionStore.paginationMeta.last_page" 
+                :key="page"
+                :variant="transactionStore.paginationMeta.current_page === page ? 'default' : 'outline'"
+                size="sm"
+                class="w-8 h-8 p-0"
+                @click="transactionStore.goToPage(page)"
+              >
+                {{ page }}
+              </Button>
+            </div>
+
+            <Button 
+              variant="outline" 
+              size="sm" 
+              :disabled="transactionStore.paginationMeta.current_page === transactionStore.paginationMeta.last_page"
+              @click="transactionStore.goToPage(transactionStore.paginationMeta.current_page + 1)"
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -10,6 +10,9 @@ import type {
   AnalyticsData,
   EvaluationResponse,
   CsvImportItem,
+  PaginatedResponse,
+  FeedbackHistory,
+  UserProgress,
 } from '../types';
 
 // Category API
@@ -47,12 +50,16 @@ export const categoryApi = {
 export const transactionApi = {
   getAll: async (params?: {
     type?: 'income' | 'expense';
-    category_id?: number;
+    category_id?: number | string | null;
     start_date?: string;
     end_date?: string;
-  }): Promise<Transaction[]> => {
-    const response = await apiClient.get<ApiResponse<Transaction[]>>('/transactions', { params });
-    return response.data.data || [];
+    min_amount?: number;
+    max_amount?: number;
+    page?: number;
+    per_page?: number;
+  }): Promise<PaginatedResponse<Transaction>> => {
+    const response = await apiClient.get<PaginatedResponse<Transaction>>('/transactions', { params });
+    return response.data;
   },
 
   getById: async (id: number): Promise<Transaction> => {
@@ -147,13 +154,13 @@ export const ruleEngineApi = {
 
 // Feedback API
 export const feedbackApi = {
-  getAll: async (): Promise<import('../types').FeedbackHistory[]> => {
-    const response = await apiClient.get<ApiResponse<import('../types').FeedbackHistory[]>>('/feedback');
-    return response.data.data || [];
+  getAll: async (params?: { page?: number; per_page?: number }): Promise<PaginatedResponse<FeedbackHistory>> => {
+    const response = await apiClient.get<PaginatedResponse<FeedbackHistory>>('/feedback', { params });
+    return response.data;
   },
 
-  getProgress: async (): Promise<import('../types').UserProgress[]> => {
-    const response = await apiClient.get<ApiResponse<import('../types').UserProgress[]>>('/feedback/progress');
+  getProgress: async (): Promise<UserProgress[]> => {
+    const response = await apiClient.get<ApiResponse<UserProgress[]>>('/feedback/progress');
     return response.data.data || [];
   },
 

@@ -53,6 +53,10 @@ Planned features (**NOT** for current implementation):
 - Comments only for complex logic
 - Proper formatting, spacing, indentation
 
+**Import Style (TypeScript):**
+- Avoid inline type imports (e.g., `Promise<import('../types').PaginatedResponse<Transaction>>`)
+- ALWAYS use top-level `import type` statements for external types
+
 **Import Style (PHP):**
 - Avoid inline namespace imports (e.g., `private \App\Services\Service $service`)
 - ALWAYS use `use` statements at the top of the file for all classes and types

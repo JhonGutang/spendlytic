@@ -24,24 +24,28 @@ class TransactionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $userId = $request->user()->id;
-        $type = $request->query('type');
-        $categoryId = $request->query('category_id');
-        $startDate = $request->query('start_date');
-        $endDate = $request->query('end_date');
+        
+        $filters = [
+            'type' => $request->query('type'),
+            'category_id' => $request->query('category_id'),
+            'start_date' => $request->query('start_date'),
+            'end_date' => $request->query('end_date'),
+            'min_amount' => $request->query('min_amount'),
+            'max_amount' => $request->query('max_amount'),
+        ];
 
-        if ($startDate && $endDate) {
-            $transactions = $this->transactionService->getTransactionsByDateRange($startDate, $endDate, $userId);
-        } elseif ($categoryId) {
-            $transactions = $this->transactionService->getTransactionsByCategory($categoryId, $userId);
-        } elseif ($type) {
-            $transactions = $this->transactionService->getTransactionsByType($type, $userId);
-        } else {
-            $transactions = $this->transactionService->getAllTransactions($userId);
-        }
+        $perPage = $request->query('per_page', 10);
+        $transactions = $this->transactionService->getFilteredPaginated($userId, $filters, (int) $perPage);
 
         return response()->json([
             'success' => true,
-            'data' => $transactions,
+            'data' => $transactions->items(),
+            'meta' => [
+                'current_page' => $transactions->currentPage(),
+                'last_page' => $transactions->lastPage(),
+                'per_page' => $transactions->perPage(),
+                'total' => $transactions->total(),
+            ],
         ]);
     }
 

@@ -1,18 +1,51 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref, onUnmounted } from 'vue';
 import { useFeedbackStore } from '@/stores/feedbackStore';
 import InsightTimeline from '@/components/feedback/InsightTimeline.vue';
 import ProgressTrendChart from '@/components/charts/ProgressTrendChart.vue';
-import { BrainCircuit, Trophy, History, TrendingUp } from 'lucide-vue-next';
+import { BrainCircuit, Trophy, History, TrendingUp, ChevronUp, Loader2 } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
 
 const feedbackStore = useFeedbackStore();
+const showScrollTop = ref(false);
+const loadMoreTrigger = ref<HTMLElement | null>(null);
+
+let observer: IntersectionObserver | null = null;
 
 onMounted(async () => {
+  // Use the store actions which now trigger Vue Query refetch
   await Promise.all([
-    feedbackStore.fetchFeedback(),
+    feedbackStore.fetchFeedback(false), // don't force reset, use cache if available
     feedbackStore.fetchProgress()
   ]);
+
+  // Setup intersection observer for infinite scroll
+  observer = new IntersectionObserver((entries) => {
+    if (entries[0]?.isIntersecting && feedbackStore.hasMore && !feedbackStore.isFetchingMore) {
+      feedbackStore.fetchMoreFeedback();
+    }
+  }, { threshold: 0.1 });
+
+  if (loadMoreTrigger.value) {
+    observer.observe(loadMoreTrigger.value);
+  }
+
+  // Setup scroll listener for scroll-to-top button
+  window.addEventListener('scroll', handleScroll);
 });
+
+onUnmounted(() => {
+  if (observer) observer.disconnect();
+  window.removeEventListener('scroll', handleScroll);
+});
+
+function handleScroll() {
+  showScrollTop.value = window.scrollY > 400;
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 function getScoreColor(score: number) {
   if (score >= 80) return 'text-green-600';
@@ -22,7 +55,7 @@ function getScoreColor(score: number) {
 </script>
 
 <template>
-  <div class="space-y-8 max-w-6xl mx-auto px-4 md:px-0">
+  <div class="space-y-8 max-w-6xl mx-auto px-4 md:px-0 pb-20">
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
@@ -89,7 +122,37 @@ function getScoreColor(score: number) {
           :progress-history="feedbackStore.progressHistory"
           @acknowledge="feedbackStore.acknowledgeFeedback"
         />
+
+        <!-- Infinite Scroll Trigger -->
+        <div ref="loadMoreTrigger" class="py-8 flex justify-center">
+          <div v-if="feedbackStore.isFetchingMore" class="flex items-center gap-2 text-slate-400">
+            <Loader2 class="w-5 h-5 animate-spin" />
+            <span>Loading more insights...</span>
+          </div>
+          <div v-else-if="!feedbackStore.hasMore && feedbackStore.feedbackHistory.length > 0" class="text-slate-400 italic">
+            You've reached the end of your history.
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Floating Scroll to Top Button -->
+    <Transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="translate-y-10 opacity-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="translate-y-10 opacity-0"
+    >
+      <Button
+        v-if="showScrollTop"
+        @click="scrollToTop"
+        class="fixed bottom-8 right-8 rounded-full w-12 h-12 shadow-lg z-50 p-0"
+        aria-label="Scroll to top"
+      >
+        <ChevronUp class="w-6 h-6" />
+      </Button>
+    </Transition>
   </div>
 </template>

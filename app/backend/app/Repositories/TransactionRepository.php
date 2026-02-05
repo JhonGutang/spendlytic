@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionRepository
 {
-    /**
-     * Get all transactions with category relationship.
-     */
     public function getAll(int $userId): Collection
     {
         return Transaction::with('category')
@@ -18,6 +15,43 @@ class TransactionRepository
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+
+    /**
+     * Get filtered and paginated transactions.
+     */
+    public function getFilteredPaginated(int $userId, array $filters, int $perPage = 10)
+    {
+        $query = Transaction::with('category')
+            ->where('user_id', $userId)
+            ->orderBy('date', 'desc')
+            ->orderBy('created_at', 'desc');
+
+        if (!empty($filters['type'])) {
+            $query->where('type', $filters['type']);
+        }
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['start_date'])) {
+            $query->whereDate('date', '>=', $filters['start_date']);
+        }
+
+        if (!empty($filters['end_date'])) {
+            $query->whereDate('date', '<=', $filters['end_date']);
+        }
+
+        if (isset($filters['min_amount'])) {
+            $query->where('amount', '>=', $filters['min_amount']);
+        }
+
+        if (isset($filters['max_amount'])) {
+            $query->where('amount', '<=', $filters['max_amount']);
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**

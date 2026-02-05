@@ -14,12 +14,17 @@ class TransactionService
         private TransactionRepository $transactionRepository
     ) {}
 
-    /**
-     * Get all transactions.
-     */
     public function getAllTransactions(int $userId): Collection
     {
         return $this->transactionRepository->getAll($userId);
+    }
+
+    /**
+     * Get filtered and paginated transactions.
+     */
+    public function getFilteredPaginated(int $userId, array $filters, int $perPage = 10)
+    {
+        return $this->transactionRepository->getFilteredPaginated($userId, $filters, $perPage);
     }
 
     /**

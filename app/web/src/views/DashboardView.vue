@@ -19,23 +19,23 @@ const categoryStore = useCategoryStore();
 const selectedTimeRange = ref<TimeRange>('daily');
 
 const formattedIncome = computed(() => 
-  transactionStore.summary.total_income.toLocaleString('en-US', { 
+  transactionStore.summary.total_income.toLocaleString('en-PH', { 
     style: 'currency', 
-    currency: 'USD' 
+    currency: 'PHP' 
   })
 );
 
 const formattedExpenses = computed(() => 
-  transactionStore.summary.total_expenses.toLocaleString('en-US', { 
+  transactionStore.summary.total_expenses.toLocaleString('en-PH', { 
     style: 'currency', 
-    currency: 'USD' 
+    currency: 'PHP' 
   })
 );
 
 const formattedBalance = computed(() => 
-  transactionStore.summary.net_balance.toLocaleString('en-US', { 
+  transactionStore.summary.net_balance.toLocaleString('en-PH', { 
     style: 'currency', 
-    currency: 'USD' 
+    currency: 'PHP' 
   })
 );
 
@@ -189,7 +189,7 @@ onMounted(async () => {
                   transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
                 ]"
               >
-                {{ transaction.type === 'income' ? '+' : '-' }}${{ transaction.amount }}
+                {{ transaction.type === 'income' ? '+' : '-' }}₱{{ transaction.amount }}
               </p>
             </div>
           </div>
@@ -213,7 +213,7 @@ onMounted(async () => {
             >
               <div class="flex items-center justify-between text-sm">
                 <span class="font-medium text-slate-700">{{ expense.category.name }}</span>
-                <span class="font-semibold text-slate-900">${{ expense.total }}</span>
+                <span class="font-semibold text-slate-900">₱{{ expense.total }}</span>
               </div>
               <div class="w-full bg-slate-100 rounded-full h-2">
                 <div 

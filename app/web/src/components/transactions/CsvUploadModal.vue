@@ -198,7 +198,7 @@ function toggleSkip(id: number) {
                 </TableCell>
                 <TableCell class="text-right whitespace-nowrap">
                   <span :class="item.data?.type === 'income' ? 'text-green-600 font-bold' : 'text-red-600 font-bold'">
-                    {{ item.data?.type === 'income' ? '+' : '-' }}${{ item.data?.amount }}
+                    {{ item.data?.type === 'income' ? '+' : '-' }}₱{{ item.data?.amount }}
                   </span>
                 </TableCell>
                 <TableCell>

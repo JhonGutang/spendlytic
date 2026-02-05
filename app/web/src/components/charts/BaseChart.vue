@@ -112,7 +112,7 @@ const chartOptions = computed(() => ({
         label: (context: any) => {
           const label = context.dataset.label || '';
           const value = context.parsed.y;
-          return `${label}: $${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          return `${label}: ₱${value.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         },
       },
     },
@@ -138,7 +138,7 @@ const chartOptions = computed(() => ({
           size: 11,
         },
         callback: (value: any) => {
-          return '$' + value.toLocaleString('en-US');
+          return '₱' + value.toLocaleString('en-PH');
         },
       },
     },

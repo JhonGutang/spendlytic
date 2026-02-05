@@ -22,6 +22,11 @@ The core of the system's pattern detection capabilities, providing deterministic
 - **Edge Case Handling**: Built-in safety for new users with no baseline data.
 - **API Evaluation**: Authenticated endpoint to trigger pattern detection on demand.
 - **Demo Mode**: Includes a `RuleEngineSeeder` with a pre-configured demo account (`demo@example.com`) showing real-world triggers.
+- **Insights View**:
+    - **Infinite Scrolling**: Seamlessly load historical feedback as you scroll.
+    - **Data Caching**: Enhanced with TanStack Vue Query for instant access and background updates.
+    - **Scroll to Top**: Quick navigation for long history lists.
+- **Feedback Acknowledgment**: Mark insights as read to keep track of your progress.
 
 ## 📊 Dashboard
 The Dashboard serves as the central hub for financial overview and quick insights.
@@ -42,6 +47,8 @@ Core functionality for tracking and managing financial events.
     - Description
     - Amount
     - Type (Income/Expense)
+- **Advanced Filtering**: Filter transactions by type, category, date range, and amount range.
+- **Pagination**: Efficient server-side pagination (10 items per page).
 - **Manual Entry**: Form to add new transactions with validation.
 - **CSV Import**: Bulk-import transactions using a fixed template.
     - **Draft Review**: Preview parsed data before saving.

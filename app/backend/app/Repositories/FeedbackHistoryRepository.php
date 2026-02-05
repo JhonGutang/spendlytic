@@ -18,15 +18,23 @@ class FeedbackHistoryRepository
             ->get();
     }
 
-    /**
-     * Get all feedback for a user.
-     */
     public function getAll(int $userId): Collection
     {
         return FeedbackHistory::where('user_id', $userId)
             ->orderBy('week_start', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+
+    /**
+     * Get paginated feedback for a user.
+     */
+    public function getPaginated(int $userId, int $perPage = 10)
+    {
+        return FeedbackHistory::where('user_id', $userId)
+            ->orderBy('week_start', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
     }
 
     /**
