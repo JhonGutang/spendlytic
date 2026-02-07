@@ -180,13 +180,13 @@ View → Component → Composable → Store → Service → Model
 ## Documentation
 
 **MVP Documentation:**
-- **[system-overview.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/system-overview.md)** - Logic flow and architecture overview
-- **[low-concept.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/low-concept.md)** - MVP overview and project scope
-- **[finance-tracking.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/finance-tracking.md)** - Detailed system design, data models, architecture
-- **[features.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/features.md)** - Current implemented features lookup
-- **[rule-engine.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/rule-engine.md)** - Pattern detection rules and evaluation logic
-- **[finance-habit-tracker.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/finance-habit-tracker.md)** - Adaptive feedback system architecture
-- **[date-formatter.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/date-formatter.md)** - Date formatting utility documentation
+- **[system-overview.md](./docs/system-overview.md)** - Logic flow and architecture overview
+- **[low-concept.md](./docs/low-concept.md)** - MVP overview and project scope
+- **[finance-tracking.md](./docs/finance-tracking.md)** - Detailed system design, data models, architecture
+- **[features.md](./docs/features.md)** - Current implemented features lookup
+- **[rule-engine.md](./docs/rule-engine.md)** - Pattern detection rules and evaluation logic
+- **[finance-habit-tracker.md](./docs/finance-habit-tracker.md)** - Adaptive feedback system architecture
+- **[date-formatter.md](./docs/date-formatter.md)** - Date formatting utility documentation
 
 **Future Reference (NOT for MVP):**
 - **[mid-concept.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/mid-concept.md)** - Extended concept and design philosophy (advanced features)
