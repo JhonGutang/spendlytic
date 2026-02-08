@@ -59,7 +59,7 @@ function handleAcknowledge() {
 <template>
   <Card 
     :class="[
-      'group relative h-full flex flex-col overflow-hidden transition-all duration-500 border-zinc-200/60 bg-white shadow-sm hover:shadow-md hover:border-zinc-300',
+      'group relative h-full flex flex-col overflow-hidden transition-all duration-500 border-stone-300 bg-white shadow-sm hover:shadow-md hover:border-emerald-400',
       feedback.user_acknowledged ? 'opacity-70 grayscale-[0.1]' : 'hover:-translate-y-1'
     ]"
   >
@@ -71,26 +71,26 @@ function handleAcknowledge() {
       <!-- Header -->
       <div class="flex items-start justify-between mb-5">
         <div class="flex items-center gap-3">
-          <div :class="['p-2 rounded-lg bg-zinc-50 border border-zinc-100 group-hover:bg-white group-hover:shadow-sm transition-all duration-300', feedback.user_acknowledged ? 'opacity-50' : '']">
+          <div :class="['p-2 rounded-lg bg-emerald-50 border border-emerald-200 group-hover:bg-white group-hover:shadow-sm transition-all duration-300', feedback.user_acknowledged ? 'opacity-50' : '']">
             <component :is="iconComponent" :class="['w-4 h-4', iconColorClass]" />
           </div>
-          <span v-if="feedback.level === 'advanced'" class="px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 text-[10px] font-bold uppercase tracking-wider border border-violet-100">
+          <span v-if="feedback.level === 'advanced'" class="px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 text-[10px] font-bold uppercase tracking-wider border border-violet-200">
             Advanced
           </span>
         </div>
         
-        <span class="text-[10px] font-medium uppercase tracking-widest text-zinc-400">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-emerald-900/30">
            {{ feedback.rule_id.replace(/_/g, ' ') }}
         </span>
       </div>
 
       <!-- Content body -->
       <div class="flex-grow space-y-4">
-        <h3 class="text-lg font-serif font-medium text-zinc-900 leading-snug group-hover:text-emerald-950 transition-colors">
+        <h3 class="text-lg font-serif font-medium text-emerald-950 leading-snug group-hover:text-emerald-800 transition-colors">
           {{ feedback.explanation }}
         </h3>
         
-        <p class="text-sm text-zinc-500 leading-relaxed font-light border-l-2 border-zinc-100 pl-4 py-1">
+        <p class="text-sm text-emerald-900/60 leading-relaxed font-light border-l-2 border-emerald-200 pl-4 py-1">
           {{ feedback.suggestion }}
         </p>
       </div>
@@ -108,7 +108,7 @@ function handleAcknowledge() {
             <ArrowRight class="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
         </Button>
         
-        <div v-else class="flex items-center text-zinc-400 text-xs font-medium">
+        <div v-else class="flex items-center text-emerald-900/30 text-xs font-medium">
              <CheckCircle2 class="w-3.5 h-3.5 mr-1.5" />
              <span>Acknowledged</span>
         </div>

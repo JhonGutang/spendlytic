@@ -49,13 +49,13 @@ const chartData = computed(() => {
       {
         label: 'Improvement Score',
         data: sortedHistory.map(p => p.improvement_score),
-        borderColor: 'rgb(79, 70, 229)', // Indigo-600
-        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+        borderColor: 'rgb(5, 150, 105)', // Emerald-600
+        backgroundColor: 'rgba(16, 185, 129, 0.1)', // Emerald-500
         fill: true,
         tension: 0.4,
         pointRadius: 6,
         pointHoverRadius: 8,
-        pointBackgroundColor: 'rgb(79, 70, 229)',
+        pointBackgroundColor: 'rgb(5, 150, 105)', // Emerald-600
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
       },
@@ -115,7 +115,7 @@ const chartOptions = computed(() => ({
     <div v-if="loading" class="flex items-center justify-center h-full">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
     </div>
-    <div v-else-if="progressHistory.length < 2" class="flex flex-col items-center justify-center h-full text-center px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+    <div v-else-if="progressHistory.length < 2" class="flex flex-col items-center justify-center h-full text-center px-4 bg-stone-50 rounded-2xl border border-dashed border-stone-300">
       <div class="bg-white p-3 rounded-full mb-3 shadow-sm">
         <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
