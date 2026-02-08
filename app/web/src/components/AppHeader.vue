@@ -1,21 +1,9 @@
 <script setup lang="ts">
-import { Bell, Sun, Moon } from 'lucide-vue-next';
-import { ref } from 'vue';
-
 interface Props {
   isCollapsed: boolean;
 }
 
 defineProps<Props>();
-
-// Theme state (placeholder for future implementation)
-const isDarkMode = ref(false);
-
-const toggleTheme = () => {
-  isDarkMode.value = !isDarkMode.value;
-  // TODO: Implement actual theme switching logic
-  console.log('Theme toggle clicked:', isDarkMode.value ? 'dark' : 'light');
-};
 </script>
 
 <template>
