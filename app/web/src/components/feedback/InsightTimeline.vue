@@ -92,7 +92,7 @@ function getStatusText(score: number) {
             <div 
               :class="[
                 'w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center flex-col transition-all',
-                group.progress ? getScoreColor(group.progress.improvement_score) : 'bg-emerald-50 text-emerald-900/30'
+                group.progress ? getScoreColor(group.progress.improvement_score) : 'bg-emerald-50 text-emerald-600'
               ]"
             >
               <template v-if="group.progress">
@@ -106,7 +106,7 @@ function getStatusText(score: number) {
           <!-- Date Range (Mobile & Desktop positions differ slightly for style) -->
           <div class="ml-4 md:absolute md:left-1/2 md:-translate-x-1/2 md:mt-24 text-center transform md:translate-y-2">
             <div class="bg-white px-4 py-1.5 rounded-full border border-stone-300 shadow-sm inline-flex items-center gap-2 whitespace-nowrap group hover:border-emerald-400 transition-colors">
-              <span class="text-[10px] md:text-xs font-bold text-emerald-900/40 uppercase tracking-widest font-inter">
+              <span class="text-[10px] md:text-xs font-bold text-emerald-800 uppercase tracking-widest font-inter">
                 {{ formatDate(group.weekStart) }} — {{ formatDate(group.weekEnd) }}
               </span>
               <Badge v-if="group.progress" variant="outline" class="h-5 text-[9px] uppercase tracking-tighter border-emerald-100 bg-emerald-50/50 text-emerald-800">

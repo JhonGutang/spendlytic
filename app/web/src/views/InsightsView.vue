@@ -77,7 +77,7 @@ const improvementMessage = computed(() => {
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-4xl md:text-5xl font-serif font-medium text-emerald-950 tracking-tight">Behavioral Wisdom</h1>
-          <p class="text-emerald-900/60 mt-3 font-light text-lg max-w-xl">
+          <p class="text-emerald-800 mt-3 font-light text-lg max-w-xl">
              Explore the patterns that shape your financial future.
           </p>
         </div>
@@ -93,9 +93,9 @@ const improvementMessage = computed(() => {
             </div>
             <CardContent class="p-8 h-full flex flex-col justify-between relative z-10">
                 <div>
-                    <h3 class="text-emerald-200/80 uppercase tracking-[0.2em] text-xs font-bold font-inter mb-1">Current Score</h3>
+                    <h3 class="text-emerald-100 uppercase tracking-[0.2em] text-xs font-bold font-inter mb-1">Current Score</h3>
                     <div class="flex items-baseline gap-1">
-                        <span class="text-6xl font-serif font-medium">{{ currentScore }}</span>
+                        <span class="text-6xl font-serif font-medium text-white">{{ currentScore }}</span>
                         <span class="text-xl text-emerald-400 font-serif">%</span>
                     </div>
                 </div>
@@ -155,7 +155,7 @@ const improvementMessage = computed(() => {
                <BrainCircuit class="w-10 h-10 text-emerald-200" />
             </div>
             <h3 class="text-xl font-serif text-emerald-900">Your journal is waiting</h3>
-            <p class="text-emerald-900/50 max-w-sm mt-3 font-light">
+            <p class="text-emerald-800 max-w-sm mt-3 font-light italic">
               As you continue tracking your expenses, we'll build a library of personalized advice to help you reach your goals.
             </p>
          </div>
@@ -173,10 +173,10 @@ const improvementMessage = computed(() => {
                   <Loader2 class="w-4 h-4 animate-spin" />
                   <span class="text-sm font-medium">Unearthing more insights...</span>
                 </div>
-                <div v-else-if="!feedbackStore.hasMore && feedbackStore.feedbackHistory.length > 0" class="text-emerald-900/30 italic text-sm flex items-center gap-2">
-                   <div class="w-1 h-1 rounded-full bg-emerald-200"></div>
+                <div v-else-if="!feedbackStore.hasMore && feedbackStore.feedbackHistory.length > 0" class="text-emerald-800 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
+                   <div class="w-1 h-1 rounded-full bg-emerald-400"></div>
                    Beginning of your journey
-                   <div class="w-1 h-1 rounded-full bg-emerald-200"></div>
+                   <div class="w-1 h-1 rounded-full bg-emerald-400"></div>
                 </div>
              </div>
          </div>
@@ -194,7 +194,7 @@ const improvementMessage = computed(() => {
       <Button
         v-if="showScrollTop"
         @click="scrollToTop"
-        class="fixed bottom-8 right-8 rounded-full w-12 h-12 shadow-xl shadow-emerald-900/10 z-50 p-0 bg-emerald-900 hover:bg-emerald-800 text-white border border-emerald-800"
+        class="fixed bottom-8 right-8 rounded-full w-11 h-11 shadow-lg shadow-emerald-900/10 z-50 p-0 bg-emerald-900 hover:bg-emerald-800 text-white border border-emerald-800 transition-all hover:-translate-y-1"
         aria-label="Scroll to top"
       >
         <ChevronUp class="w-5 h-5" />

@@ -15,12 +15,12 @@
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 class="text-4xl font-serif font-medium text-emerald-950 tracking-tight">Your Financial Garden</h1>
-          <p class="text-emerald-900/60 mt-2 font-light text-lg">Detailed overview of your disciplines and growth.</p>
+          <p class="text-emerald-800 mt-2 font-light text-lg">Detailed overview of your disciplines and growth.</p>
         </div>
         <div class="flex items-center gap-3">
           <RouterLink 
             to="/transactions" 
-            class="inline-flex items-center justify-center rounded-full bg-emerald-900 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-emerald-900/10 hover:bg-emerald-800 transition-all hover:-translate-y-0.5"
+            class="inline-flex items-center justify-center rounded-full bg-emerald-900 px-8 h-11 text-[11px] font-bold text-white shadow-lg shadow-emerald-900/10 hover:bg-emerald-800 transition-all hover:-translate-y-0.5 uppercase tracking-widest"
           >
             Add Transaction
           </RouterLink>
@@ -38,7 +38,7 @@
           <CardContent class="p-8 md:p-10 relative z-10">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
               <div class="space-y-4">
-                <p class="text-emerald-200/80 uppercase tracking-[0.2em] text-xs font-bold font-inter">Net Balance</p>
+                <p class="text-emerald-100 uppercase tracking-[0.2em] text-xs font-bold font-inter">Net Balance</p>
                 <div class="flex items-baseline gap-2">
                    <h2 class="text-5xl md:text-6xl font-serif text-white">{{ formattedBalance }}</h2>
                    <div class="flex items-center text-emerald-300 text-sm font-medium px-2 py-0.5 bg-emerald-800/40 rounded-full">
@@ -48,12 +48,12 @@
                 </div>
                 <div class="flex gap-8 pt-4">
                   <div>
-                    <p class="text-emerald-200/50 text-[10px] uppercase tracking-widest mb-1 italic">Income This Period</p>
+                    <p class="text-emerald-200 text-[10px] uppercase font-bold tracking-widest mb-1 italic">Income This Period</p>
                     <p class="text-xl font-serif text-emerald-50">{{ formattedIncome }}</p>
                   </div>
                   <div class="w-px h-10 bg-emerald-800/50"></div>
                   <div>
-                    <p class="text-emerald-200/50 text-[10px] uppercase tracking-widest mb-1 italic">Expenses This Period</p>
+                    <p class="text-emerald-200 text-[10px] uppercase font-bold tracking-widest mb-1 italic">Expenses This Period</p>
                     <p class="text-xl font-serif text-rose-200">{{ formattedExpenses }}</p>
                   </div>
                 </div>
@@ -62,14 +62,14 @@
               <!-- Behavioral Health Mini-Widget -->
               <div class="bg-white/5 border border-white/10 backdrop-blur-md p-6 rounded-3xl md:w-64">
                 <div class="flex items-center justify-between mb-4">
-                  <span class="text-xs text-emerald-100/60 font-medium uppercase tracking-widest font-inter">Financial Health</span>
-                  <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                   <span class="text-xs text-emerald-100 font-bold uppercase tracking-widest font-inter">Financial Health</span>
+                   <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
                 </div>
                 <div class="text-4xl font-serif text-white mb-2">Excellent</div>
                 <div class="w-full bg-white/10 h-1.5 rounded-full mt-4 overflow-hidden">
                    <div class="bg-emerald-400 h-full w-[88%] rounded-full shadow-[0_0_8px_rgba(52,211,153,0.5)]"></div>
                 </div>
-                <p class="text-[10px] text-emerald-200/40 mt-3 italic">"Your disciplined saving is blooming."</p>
+                <p class="text-[10px] text-emerald-200 mt-3 font-medium italic">"Your disciplined saving is blooming."</p>
               </div>
             </div>
           </CardContent>
@@ -80,7 +80,7 @@
           <CardHeader class="pb-2">
              <div class="flex items-center justify-between">
                 <CardTitle class="text-lg font-serif text-emerald-950">Active Insights</CardTitle>
-                <RouterLink to="/insights" class="text-xs text-emerald-700 hover:underline uppercase tracking-widest font-bold">View All</RouterLink>
+                                <RouterLink to="/insights" class="text-[10px] text-emerald-800 hover:text-emerald-950 uppercase tracking-widest font-black transition-colors">View All →</RouterLink>
              </div>
           </CardHeader>
           <CardContent class="flex-1 overflow-hidden">
@@ -105,7 +105,7 @@
                    </div>
                 </div>
                 <div class="pt-2">
-                   <button class="w-full py-3 border border-dashed border-emerald-200 rounded-2xl text-[10px] text-emerald-900/40 uppercase tracking-[0.2em] font-bold hover:bg-emerald-50 transition-colors">
+                   <button class="w-full h-11 border border-dashed border-emerald-400 rounded-2xl text-[10px] text-emerald-800 uppercase tracking-[0.2em] font-black hover:bg-emerald-50 transition-all">
                       Evaluate Rules Now
                    </button>
                 </div>
@@ -120,15 +120,15 @@
             <div class="flex items-center bg-emerald-100/30 p-1 rounded-full">
                <button 
                  @click="selectedTimeRange = 'daily'"
-                 :class="['px-4 py-1.5 text-xs font-medium rounded-full transition-all', selectedTimeRange === 'daily' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-900/40 hover:text-emerald-900/70']"
+                 :class="['px-5 h-9 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'daily' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
                >Daily</button>
                <button 
                  @click="selectedTimeRange = 'monthly'"
-                 :class="['px-4 py-1.5 text-xs font-medium rounded-full transition-all', selectedTimeRange === 'monthly' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-900/40 hover:text-emerald-900/70']"
+                 :class="['px-5 h-9 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'monthly' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
                >Monthly</button>
                <button 
                  @click="selectedTimeRange = 'yearly'"
-                 :class="['px-4 py-1.5 text-xs font-medium rounded-full transition-all', selectedTimeRange === 'yearly' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-900/40 hover:text-emerald-900/70']"
+                 :class="['px-5 h-9 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'yearly' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
                >Yearly</button>
             </div>
           </CardHeader>
@@ -171,11 +171,11 @@
             
             <div class="mt-8 pt-6 border-t border-emerald-100/50 grid grid-cols-2 gap-4">
                <div class="p-3 bg-emerald-50/50 rounded-2xl text-center">
-                  <p class="text-[10px] text-emerald-900/40 uppercase tracking-widest mb-1 italic">Entries</p>
+                  <p class="text-[10px] text-emerald-800 uppercase font-black tracking-widest mb-1">Entries</p>
                   <p class="text-lg font-serif text-emerald-950">{{ transactionStore.summary.transaction_count }}</p>
                </div>
                <div class="p-3 bg-emerald-50/50 rounded-2xl text-center">
-                  <p class="text-[10px] text-emerald-900/40 uppercase tracking-widest mb-1 italic">Types</p>
+                  <p class="text-[10px] text-emerald-800 uppercase font-black tracking-widest mb-1">Types</p>
                   <p class="text-lg font-serif text-emerald-950">{{ categoryStore.categories.length }}</p>
                </div>
             </div>
@@ -196,10 +196,10 @@
                  <table class="w-full text-left">
                     <thead>
                        <tr class="border-b border-emerald-100/50 bg-emerald-50/30">
-                          <th class="px-8 py-3 text-[10px] font-bold text-emerald-900/40 uppercase tracking-widest">Type</th>
-                          <th class="px-8 py-3 text-[10px] font-bold text-emerald-900/40 uppercase tracking-widest">Description</th>
-                          <th class="px-8 py-3 text-[10px] font-bold text-emerald-900/40 uppercase tracking-widest">Date</th>
-                          <th class="px-8 py-3 text-right text-[10px] font-bold text-emerald-900/40 uppercase tracking-widest pr-10">Amount</th>
+                          <th class="px-8 py-3 text-[10px] font-bold text-emerald-800 uppercase tracking-widest">Type</th>
+                          <th class="px-8 py-3 text-[10px] font-bold text-emerald-800 uppercase tracking-widest">Description</th>
+                          <th class="px-8 py-3 text-[10px] font-bold text-emerald-800 uppercase tracking-widest">Date</th>
+                          <th class="px-8 py-3 text-right text-[10px] font-bold text-emerald-800 uppercase tracking-widest pr-10">Amount</th>
                        </tr>
                     </thead>
                     <tbody class="divide-y divide-emerald-50/50">
@@ -220,10 +220,10 @@
                           </td>
                           <td class="px-8 py-5">
                              <p class="font-medium text-emerald-950 text-sm">{{ transaction.category?.name }}</p>
-                             <p class="text-xs text-emerald-900/40 italic font-light">{{ transaction.description || 'No notes added' }}</p>
+                             <p class="text-xs text-emerald-800 italic font-medium">{{ transaction.description || 'No notes added' }}</p>
                           </td>
                           <td class="px-8 py-5">
-                             <p class="text-xs text-emerald-900/60 font-medium">{{ formatTransactionDate(transaction.date) }}</p>
+                             <p class="text-xs text-emerald-700 font-bold uppercase tracking-tight">{{ formatTransactionDate(transaction.date) }}</p>
                           </td>
                           <td class="px-8 py-5 text-right pr-10">
                              <span 

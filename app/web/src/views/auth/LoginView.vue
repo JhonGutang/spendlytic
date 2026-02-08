@@ -77,12 +77,12 @@ const handleLogin = async () => {
       </CardContent>
       <CardFooter class="flex flex-col gap-4 pt-4 pb-8">
         <Button 
-          class="w-full bg-emerald-900 hover:bg-emerald-800 text-[#FDFCF8] py-6 text-base font-medium tracking-wide rounded-xl shadow-lg shadow-emerald-900/10 hover:shadow-xl hover:shadow-emerald-900/20 transition-all duration-300 transform active:scale-[0.98]"
+          class="w-full h-11 bg-emerald-900 hover:bg-emerald-800 text-[#FDFCF8] text-[11px] font-bold uppercase tracking-[0.2em] rounded-full shadow-lg shadow-emerald-900/10 hover:shadow-xl hover:shadow-emerald-900/20 transition-all duration-300 transform active:scale-[0.98]"
           :disabled="authStore.loading"
           @click="handleLogin"
         >
           <Loader2 v-if="authStore.loading" class="mr-2 h-4 w-4 animate-spin" />
-          <span v-else>Sign In</span>
+          <span v-else>Induct Presence</span>
         </Button>
         <p class="text-center text-sm text-emerald-900/60">
           Don't have an account? 

@@ -79,7 +79,7 @@ function handleAcknowledge() {
           </span>
         </div>
         
-        <span class="text-[10px] font-medium uppercase tracking-widest text-emerald-900/30">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-700">
            {{ feedback.rule_id.replace(/_/g, ' ') }}
         </span>
       </div>
@@ -90,7 +90,7 @@ function handleAcknowledge() {
           {{ feedback.explanation }}
         </h3>
         
-        <p class="text-sm text-emerald-900/60 leading-relaxed font-light border-l-2 border-emerald-200 pl-4 py-1">
+        <p class="text-sm text-emerald-800 leading-relaxed font-light border-l-2 border-emerald-300 pl-4 py-1 italic">
           {{ feedback.suggestion }}
         </p>
       </div>
@@ -101,14 +101,14 @@ function handleAcknowledge() {
             v-if="!feedback.user_acknowledged"
             variant="ghost" 
             size="sm" 
-            class="h-8 text-xs font-semibold px-0 text-emerald-600 hover:text-emerald-700 hover:bg-transparent group/btn"
+            class="h-10 text-[10px] uppercase tracking-widest font-black px-4 text-emerald-800 hover:text-emerald-950 hover:bg-emerald-50 rounded-full group/btn transition-all"
             @click="handleAcknowledge"
         >
             <span class="mr-2">I'll keep this in mind</span>
-            <ArrowRight class="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
+            <ArrowRight class="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
         </Button>
         
-        <div v-else class="flex items-center text-emerald-900/30 text-xs font-medium">
+        <div v-else class="flex items-center text-emerald-600 text-xs font-bold uppercase tracking-tight">
              <CheckCircle2 class="w-3.5 h-3.5 mr-1.5" />
              <span>Acknowledged</span>
         </div>

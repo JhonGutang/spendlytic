@@ -69,7 +69,7 @@ const stats = [
       </div>
       <div class="flex items-center gap-8 text-sm font-medium tracking-wide">
         <button @click="navigateToDashboard" class="text-emerald-900/70 hover:text-emerald-900 transition-colors">Log in</button>
-        <Button @click="navigateToDashboard" variant="default" class="bg-emerald-900 text-[#FDFCF8] hover:bg-emerald-800 transition-all rounded-full px-6 py-5 text-xs tracking-wider uppercase">
+        <Button @click="navigateToDashboard" variant="default" class="bg-emerald-900 text-[#FDFCF8] hover:bg-emerald-800 transition-all rounded-full h-11 px-6 text-[11px] font-bold tracking-widest uppercase">
           Start Journey
         </Button>
       </div>
@@ -123,7 +123,7 @@ const stats = [
           >
             <Button 
               @click="navigateToDashboard"
-              class="h-14 px-8 rounded-full bg-emerald-900 text-[#FDFCF8] hover:bg-emerald-800 transition-all text-sm tracking-widest uppercase shadow-lg shadow-emerald-900/10"
+              class="h-11 px-10 rounded-full bg-emerald-900 text-[#FDFCF8] hover:bg-emerald-800 transition-all text-[11px] font-bold tracking-[0.2em] uppercase shadow-lg shadow-emerald-900/10"
             >
               Begin Now
             </Button>
@@ -236,7 +236,7 @@ const stats = [
             <p class="text-lg text-emerald-900/60 mb-10 font-light">Join a community of disciplined savers building their future.</p>
             <Button 
               @click="navigateToDashboard"
-              class="h-16 px-12 rounded-full bg-emerald-950 text-[#FDFCF8] hover:bg-emerald-800 transition-all text-sm tracking-widest uppercase shadow-xl hover:shadow-2xl hover:-translate-y-1"
+              class="h-12 px-12 rounded-full bg-emerald-950 text-[#FDFCF8] hover:bg-emerald-800 transition-all text-xs font-bold tracking-[0.2em] uppercase shadow-xl hover:shadow-2xl hover:-translate-y-1"
             >
               Start Your Journey
             </Button>

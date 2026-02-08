@@ -12,6 +12,9 @@ An engineering-focused finance tracker that explores how **deterministic feedbac
 > [!IMPORTANT]
 > This is an **engineering exploration**, not a production finance app. Focus is on system design, rule-based logic, and adaptive behavior.
 
+> [!CAUTION]
+> **STRICT UI STANDARD:** All visual modifications MUST strictly adhere to the **Disciplined UI** rulings (Button height `h-11`, `rounded-full`, etc.). Failure to follow the layout hierarchy in [`docs/design-system.md`](./docs/design-system.md) is considered a breaking change.
+
 ### Current Scope (MVP)
 
 **Building:** Finance tracker with adaptive feedback engine including:
@@ -70,6 +73,15 @@ Planned features (**NOT** for current implementation):
 - Appropriate levels of abstraction
 - Single responsibility per function
 - Extract complex logic into well-named helpers
+
+### UI & Visual Excellence
+
+**Disciplined UI Standard:**
+- **Buttons:** MUST be `h-11`, `rounded-full`, `uppercase font-bold`, and `tracking-widest`.
+- **Contrast:** NEVER use low-opacity text for critical info. Use high-contrast, solid colors.
+- **Typography:** Titles in `font-serif`, data/body in `font-inter`.
+- **Tone:** Use the "Financial Garden" botanical terminology (Seeds, Harvest, Wisdom).
+- **Reference:** Always follow [`docs/design-system.md`](./docs/design-system.md).
 
 ### Workflow
 
@@ -184,6 +196,7 @@ View → Component → Composable → Store → Service → Model
 - **[low-concept.md](./docs/low-concept.md)** - MVP overview and project scope
 - **[finance-tracking.md](./docs/finance-tracking.md)** - Detailed system design, data models, architecture
 - **[features.md](./docs/features.md)** - Current implemented features lookup
+- **[design-system.md](./docs/design-system.md)** - UI/UX standards and design philosophy
 - **[rule-engine.md](./docs/rule-engine.md)** - Pattern detection rules and evaluation logic
 - **[finance-habit-tracker.md](./docs/finance-habit-tracker.md)** - Adaptive feedback system architecture
 - **[date-formatter.md](./docs/date-formatter.md)** - Date formatting utility documentation
