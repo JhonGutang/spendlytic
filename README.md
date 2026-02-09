@@ -5,6 +5,7 @@ An engineering-focused finance tracker with adaptive feedback engine.
 ## Quick Start
 
 ### Prerequisites
+
 - PHP 8.2+
 - Composer
 - Node.js 18+
@@ -13,23 +14,28 @@ An engineering-focused finance tracker with adaptive feedback engine.
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd finance-behavioral-system
    ```
 
 2. **Start Backend**
+
    ```bash
    cd app/backend
    php artisan serve
    ```
+
    Backend runs on http://localhost:8000
 
 3. **Start Frontend** (in a new terminal)
+
    ```bash
    cd app/web
    npm run dev
    ```
+
    Frontend runs on http://localhost:5173
 
 4. **Open Browser**
@@ -69,6 +75,8 @@ finance-behavioral-system/
 ✅ Transaction tracking  
 ✅ Pattern detection rules  
 ✅ Feedback engine
+✅ Dynamic Dashboard with Trends
+✅ Adaptive Feedback Visualization
 
 ## License
 

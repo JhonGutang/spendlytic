@@ -1,25 +1,25 @@
-import { defineStore } from 'pinia';
-import { ref, computed, watch } from 'vue';
+import { defineStore } from "pinia";
+import { ref, computed, watch } from "vue";
 import {
   useTransactions,
   useTransactionSummary,
   useCreateTransaction,
   useUpdateTransaction,
   useDeleteTransaction,
-} from '../composables/useTransactions';
-import type { TransactionFormData, CsvImportItem, Transaction } from '../types';
-import { transactionApi } from '../services/api.service';
+} from "../composables/useTransactions";
+import type { TransactionFormData, CsvImportItem, Transaction } from "../types";
+import { transactionApi } from "../services/api.service";
 
 /**
  * Transaction Store
- * 
+ *
  * Manages transaction state using TanStack Vue Query for server state.
  * Provides helper methods for component usage with backward compatibility.
  */
-export const useTransactionStore = defineStore('transaction', () => {
+export const useTransactionStore = defineStore("transaction", () => {
   // Query parameters for filtering and pagination
   const queryParams = ref<{
-    type?: 'income' | 'expense';
+    type?: "income" | "expense";
     category_id?: number | string | null;
     start_date?: string;
     end_date?: string;
@@ -47,38 +47,55 @@ export const useTransactionStore = defineStore('transaction', () => {
   const deleteMutation = useDeleteTransaction();
 
   // Watch for query results to update pagination meta
-  watch(() => transactionsQuery.data.value, (newData) => {
-    if (newData && 'meta' in newData) {
-      paginationMeta.value = newData.meta;
-    }
-  });
+  watch(
+    () => transactionsQuery.data.value,
+    (newData) => {
+      if (newData && "meta" in newData) {
+        paginationMeta.value = newData.meta;
+      }
+    },
+  );
 
   // Backward compatible getters
   const transactions = computed(() => {
     const data = transactionsQuery.data.value;
     if (!data) return [];
-    return 'data' in data ? data.data : (data as unknown as Transaction[]);
+    return "data" in data ? data.data : (data as unknown as Transaction[]);
   });
 
-  const summary = computed(() => summaryQuery.data.value?.summary || {
-    total_income: 0,
-    total_expenses: 0,
-    net_balance: 0,
-    transaction_count: 0,
-  });
-  const expensesByCategory = computed(() => summaryQuery.data.value?.expenses_by_category || []);
-  const loading = computed(() => transactionsQuery.isPending.value || summaryQuery.isPending.value);
-  const error = computed(() => 
-    transactionsQuery.error.value?.message || 
-    summaryQuery.error.value?.message || 
-    null
+  const summary = computed(
+    () =>
+      summaryQuery.data.value?.summary || {
+        total_income: 0,
+        total_expenses: 0,
+        net_balance: 0,
+        transaction_count: 0,
+        income_this_month: 0,
+        expenses_this_month: 0,
+        net_balance_this_month: 0,
+        income_trend: 0,
+        expense_trend: 0,
+        net_balance_trend: 0,
+      },
+  );
+  const expensesByCategory = computed(
+    () => summaryQuery.data.value?.expenses_by_category || [],
+  );
+  const loading = computed(
+    () => transactionsQuery.isPending.value || summaryQuery.isPending.value,
+  );
+  const error = computed(
+    () =>
+      transactionsQuery.error.value?.message ||
+      summaryQuery.error.value?.message ||
+      null,
   );
 
   /**
    * Fetch transactions with optional filters
    */
   async function fetchTransactions(params?: {
-    type?: 'income' | 'expense';
+    type?: "income" | "expense";
     category_id?: number | string | null;
     start_date?: string;
     end_date?: string;
@@ -124,14 +141,17 @@ export const useTransactionStore = defineStore('transaction', () => {
   /**
    * Update an existing transaction
    */
-  async function updateTransaction(id: number, data: Partial<TransactionFormData>) {
+  async function updateTransaction(
+    id: number,
+    data: Partial<TransactionFormData>,
+  ) {
     return new Promise((resolve, reject) => {
       updateMutation.mutate(
         { id, data },
         {
           onSuccess: (updated: Transaction) => resolve(updated),
           onError: (error: any) => reject(error),
-        }
+        },
       );
     });
   }
@@ -188,4 +208,3 @@ export const useTransactionStore = defineStore('transaction', () => {
     importConfirm,
   };
 });
-

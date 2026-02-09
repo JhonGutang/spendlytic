@@ -3,7 +3,7 @@
 > **Document Type:** Technical Specification  
 > **Phase:** MVP - Adaptive Feedback Engine  
 > **Status:** Implemented  
-> **Last Updated:** 2026-02-07
+> **Last Updated:** 2026-02-09
 
 ---
 
@@ -26,6 +26,7 @@ The Finance Habit Tracker is the **adaptive feedback component** of the Finance 
 ### Core Concept
 
 Instead of just showing what happened, the system:
+
 1. **Detects patterns** using the Rule Engine (see [`rule-engine.md`](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/rule-engine.md))
 2. **Generates feedback** using structured templates
 3. **Adapts suggestions** based on user progress over time
@@ -80,11 +81,11 @@ Each feedback template contains:
 interface FeedbackTemplate {
   template_id: string;
   rule_id: string;
-  level: 'basic' | 'advanced';
-  explanation: string;           // Why this feedback is shown
-  suggestion: string;            // What the user should do
-  placeholders: string[];        // Variables to fill (e.g., ${amount})
-  priority: number;              // Display priority (1-10)
+  level: "basic" | "advanced";
+  explanation: string; // Why this feedback is shown
+  suggestion: string; // What the user should do
+  placeholders: string[]; // Variables to fill (e.g., ${amount})
+  priority: number; // Display priority (1-10)
 }
 ```
 
@@ -93,6 +94,7 @@ interface FeedbackTemplate {
 #### Rule 1: Category Overspend
 
 **Basic Level Template:**
+
 ```typescript
 {
   template_id: 'category_overspend_basic',
@@ -106,6 +108,7 @@ interface FeedbackTemplate {
 ```
 
 **Advanced Level Template:**
+
 ```typescript
 {
   template_id: 'category_overspend_advanced',
@@ -123,6 +126,7 @@ interface FeedbackTemplate {
 #### Rule 2: Weekly Spending Spike
 
 **Basic Level Template:**
+
 ```typescript
 {
   template_id: 'weekly_spike_basic',
@@ -136,6 +140,7 @@ interface FeedbackTemplate {
 ```
 
 **Advanced Level Template:**
+
 ```typescript
 {
   template_id: 'weekly_spike_advanced',
@@ -153,6 +158,7 @@ interface FeedbackTemplate {
 #### Rule 3: Frequent Small Purchases
 
 **Basic Level Template:**
+
 ```typescript
 {
   template_id: 'small_purchases_basic',
@@ -166,6 +172,7 @@ interface FeedbackTemplate {
 ```
 
 **Advanced Level Template:**
+
 ```typescript
 {
   template_id: 'small_purchases_advanced',
@@ -194,43 +201,46 @@ The MVP implements **2 feedback levels** that adapt based on user progress:
 ```typescript
 function selectFeedbackLevel(userProgress: UserProgress): FeedbackLevel {
   const recentWeeks = userProgress.last_4_weeks;
-  
+
   // Count consecutive weeks of rule violations
   const consecutiveViolations = countConsecutiveViolations(recentWeeks);
-  
+
   // Count consecutive weeks of improvement
   const consecutiveImprovements = countConsecutiveImprovements(recentWeeks);
-  
+
   if (consecutiveViolations >= 2) {
     // User is struggling → simpler advice
-    return 'basic';
+    return "basic";
   }
-  
+
   if (consecutiveImprovements >= 2) {
     // User is improving → more advanced advice
-    return 'advanced';
+    return "advanced";
   }
-  
+
   // Default to basic for new users or mixed progress
-  return 'basic';
+  return "basic";
 }
 ```
 
 ### Progress States
 
 #### Struggling State
+
 - **Condition:** Same rule triggered 2+ weeks in a row
 - **Feedback Level:** Basic
 - **Approach:** Simpler, more actionable suggestions
 - **Example:** "Try limiting Food spending to ₱200 next week"
 
 #### Improving State
+
 - **Condition:** Rule did NOT trigger for 2+ weeks in a row (after previously triggering)
 - **Feedback Level:** Advanced
 - **Approach:** More detailed analysis, optimization strategies
 - **Example:** "Your 4-week average is ₱180. Consider setting a ₱170 budget to continue improving"
 
 #### Stable State
+
 - **Condition:** Mixed results, no clear pattern
 - **Feedback Level:** Basic
 - **Approach:** Maintain awareness, reinforce positive behavior
@@ -243,29 +253,31 @@ function selectFeedbackLevel(userProgress: UserProgress): FeedbackLevel {
 ### Data Model
 
 #### User Progress Record
+
 ```typescript
 interface UserProgress {
   id: string;
   user_id: string;
   week_start: Date;
   week_end: Date;
-  rules_triggered: string[];           // IDs of rules that triggered
-  rules_not_triggered: string[];       // IDs of rules that did not trigger
+  rules_triggered: string[]; // IDs of rules that triggered
+  rules_not_triggered: string[]; // IDs of rules that did not trigger
   feedback_generated: FeedbackMessage[];
-  improvement_score: number;           // 0-100 scale
+  improvement_score: number; // 0-100 scale
 }
 ```
 
 #### Feedback Message
+
 ```typescript
 interface FeedbackMessage {
   feedback_id: string;
   timestamp: Date;
   rule_id: string;
   template_id: string;
-  level: 'basic' | 'advanced';
-  explanation: string;                 // Filled template
-  suggestion: string;                  // Filled template
+  level: "basic" | "advanced";
+  explanation: string; // Filled template
+  suggestion: string; // Filled template
   user_id: string;
   displayed: boolean;
   user_acknowledged: boolean;
@@ -275,34 +287,39 @@ interface FeedbackMessage {
 ### Progress Metrics
 
 #### Improvement Score Calculation
+
 ```typescript
 function calculateImprovementScore(history: UserProgress[]): number {
   if (history.length < 2) return 50; // Neutral for new users
-  
+
   const recent = history.slice(-4); // Last 4 weeks
   let score = 50;
-  
+
   // Positive factors
   for (const week of recent) {
     // Fewer rules triggered = better
     score += (3 - week.rules_triggered.length) * 5;
-    
+
     // Consistent improvement = better
     if (week.rules_triggered.length < previous.rules_triggered.length) {
       score += 10;
     }
   }
-  
+
   // Normalize to 0-100
   return Math.max(0, Math.min(100, score));
 }
 ```
 
 #### Consecutive Violation Tracking
+
 ```typescript
-function countConsecutiveViolations(history: UserProgress[], ruleId: string): number {
+function countConsecutiveViolations(
+  history: UserProgress[],
+  ruleId: string,
+): number {
   let count = 0;
-  
+
   // Start from most recent week and count backwards
   for (let i = history.length - 1; i >= 0; i--) {
     if (history[i].rules_triggered.includes(ruleId)) {
@@ -311,7 +328,7 @@ function countConsecutiveViolations(history: UserProgress[], ruleId: string): nu
       break; // Stop at first week without violation
     }
   }
-  
+
   return count;
 }
 ```
@@ -325,23 +342,23 @@ function countConsecutiveViolations(history: UserProgress[], ruleId: string): nu
 ```typescript
 function fillTemplate(
   template: FeedbackTemplate,
-  data: Record<string, any>
+  data: Record<string, any>,
 ): FeedbackMessage {
   let explanation = template.explanation;
   let suggestion = template.suggestion;
-  
+
   // Replace all placeholders with actual values
   for (const placeholder of template.placeholders) {
     const value = data[placeholder];
-    
+
     // Format value based on type
     const formattedValue = formatValue(value, placeholder);
-    
+
     // Replace ${placeholder} with formatted value
     explanation = explanation.replace(`\${${placeholder}}`, formattedValue);
     suggestion = suggestion.replace(`\${${placeholder}}`, formattedValue);
   }
-  
+
   return {
     feedback_id: generateId(),
     timestamp: new Date(),
@@ -352,21 +369,25 @@ function fillTemplate(
     suggestion,
     data,
     displayed: false,
-    user_acknowledged: false
+    user_acknowledged: false,
   };
 }
 
 function formatValue(value: any, placeholder: string): string {
   // Currency formatting
-  if (placeholder.includes('amount') || placeholder.includes('total') || placeholder.includes('budget')) {
+  if (
+    placeholder.includes("amount") ||
+    placeholder.includes("total") ||
+    placeholder.includes("budget")
+  ) {
     return `₱${value.toFixed(2)}`;
   }
-  
+
   // Percentage formatting
-  if (placeholder.includes('percentage')) {
+  if (placeholder.includes("percentage")) {
     return `${value.toFixed(1)}%`;
   }
-  
+
   // Default: convert to string
   return String(value);
 }
@@ -377,6 +398,7 @@ function formatValue(value: any, placeholder: string): string {
 #### Database Schema
 
 **`feedback_history` Table:**
+
 ```sql
 CREATE TABLE feedback_history (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -398,6 +420,7 @@ CREATE TABLE feedback_history (
 ```
 
 **`user_progress` Table:**
+
 ```sql
 CREATE TABLE user_progress (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -419,43 +442,45 @@ CREATE TABLE user_progress (
 ### Unit Tests
 
 #### Template Filling
+
 ```typescript
-describe('Template Filling', () => {
-  test('fills all placeholders correctly', () => {
+describe("Template Filling", () => {
+  test("fills all placeholders correctly", () => {
     const template = {
-      explanation: 'You spent ₱${amount} in ${category}',
-      placeholders: ['amount', 'category']
+      explanation: "You spent ₱${amount} in ${category}",
+      placeholders: ["amount", "category"],
     };
-    
-    const data = { amount: 250.50, category: 'Food' };
+
+    const data = { amount: 250.5, category: "Food" };
     const result = fillTemplate(template, data);
-    
-    expect(result.explanation).toBe('You spent ₱250.50 in Food');
+
+    expect(result.explanation).toBe("You spent ₱250.50 in Food");
   });
 });
 ```
 
 #### Level Selection
+
 ```typescript
-describe('Feedback Level Selection', () => {
-  test('selects basic level for struggling users', () => {
+describe("Feedback Level Selection", () => {
+  test("selects basic level for struggling users", () => {
     const progress = createProgressHistory([
-      { rules_triggered: ['category_overspend'] },
-      { rules_triggered: ['category_overspend'] }
+      { rules_triggered: ["category_overspend"] },
+      { rules_triggered: ["category_overspend"] },
     ]);
-    
+
     const level = selectFeedbackLevel(progress);
-    expect(level).toBe('basic');
+    expect(level).toBe("basic");
   });
-  
-  test('selects advanced level for improving users', () => {
+
+  test("selects advanced level for improving users", () => {
     const progress = createProgressHistory([
       { rules_triggered: [] },
-      { rules_triggered: [] }
+      { rules_triggered: [] },
     ]);
-    
+
     const level = selectFeedbackLevel(progress);
-    expect(level).toBe('advanced');
+    expect(level).toBe("advanced");
   });
 });
 ```
@@ -463,6 +488,7 @@ describe('Feedback Level Selection', () => {
 ### Integration Tests
 
 Test complete feedback generation flow:
+
 1. Trigger rule with sample data
 2. Verify correct template selected
 3. Verify placeholders filled correctly
@@ -472,6 +498,7 @@ Test complete feedback generation flow:
 ### Simulation Tests
 
 Create multi-week scenarios to test adaptive behavior:
+
 - **Scenario 1:** User consistently violates rules → feedback stays basic
 - **Scenario 2:** User improves over time → feedback becomes advanced
 - **Scenario 3:** User has mixed results → feedback adapts appropriately
@@ -483,6 +510,7 @@ Create multi-week scenarios to test adaptive behavior:
 ### Multi-Level Feedback (Phase 2+)
 
 Expand from 2 levels to 3+ levels:
+
 - **Beginner:** Very simple, one action at a time
 - **Intermediate:** Multiple suggestions, prioritized
 - **Advanced:** Detailed analysis, sophisticated strategies
@@ -491,6 +519,7 @@ Expand from 2 levels to 3+ levels:
 ### Personalized Templates
 
 Allow customization based on user preferences:
+
 - Tone (encouraging vs. direct)
 - Detail level (concise vs. comprehensive)
 - Focus (saving vs. awareness)
@@ -498,6 +527,7 @@ Allow customization based on user preferences:
 ### Feedback Effectiveness Tracking
 
 Measure whether feedback leads to behavior change:
+
 ```typescript
 interface FeedbackEffectiveness {
   feedback_id: string;
@@ -511,6 +541,7 @@ interface FeedbackEffectiveness {
 ### Positive Reinforcement
 
 Add feedback for positive behaviors:
+
 - Spending below baseline
 - Consistent improvement
 - Milestone achievements

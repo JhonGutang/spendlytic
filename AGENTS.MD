@@ -1,7 +1,7 @@
 # Spendlytic: Finance Behavioral System
 
 > **Current Phase:** MVP - Refinement  
-> **Status:** Behavioral Features & CSV Support Implemented
+> **Status:** Behavioral Features, CSV Support, & Dynamic Dashboard Implemented
 
 ---
 
@@ -18,6 +18,7 @@ An engineering-focused finance tracker that explores how **deterministic feedbac
 ### Current Scope (MVP)
 
 **Building:** Finance tracker with adaptive feedback engine including:
+
 - Transaction tracking (CSV upload or manual entry)
 - Pattern detection using 3 deterministic rules
 - Template-based feedback generation
@@ -29,6 +30,7 @@ An engineering-focused finance tracker that explores how **deterministic feedbac
 ### Future Roadmap
 
 Planned features (**NOT** for current implementation):
+
 - Additional pattern detection rules
 - Advanced feedback templates
 - Simulation and replay features
@@ -48,28 +50,34 @@ Planned features (**NOT** for current implementation):
 ### Code Quality
 
 **Type Safety:**
+
 - All frontend code MUST be strictly typed (TypeScript)
 - No `any` types unless absolutely necessary and documented
 
 **Code Clarity:**
+
 - Descriptive, self-explanatory names
 - Comments only for complex logic
 - Proper formatting, spacing, indentation
 
 **Import Style (TypeScript):**
+
 - Avoid inline type imports (e.g., `Promise<import('../types').PaginatedResponse<Transaction>>`)
 - ALWAYS use top-level `import type` statements for external types
 
 **Import Style (PHP):**
+
 - Avoid inline namespace imports (e.g., `private \App\Services\Service $service`)
 - ALWAYS use `use` statements at the top of the file for all classes and types
 
 **Constants & Config:**
+
 - Magic numbers → Named constants (UPPER_CASE)
 - Configuration in `config/` folder
 - Sensitive data in environment variables only
 
 **Abstraction:**
+
 - Appropriate levels of abstraction
 - Single responsibility per function
 - Extract complex logic into well-named helpers
@@ -77,6 +85,7 @@ Planned features (**NOT** for current implementation):
 ### UI & Visual Excellence
 
 **Disciplined UI Standard:**
+
 - **Buttons:** MUST be `h-11`, `rounded-full`, `uppercase font-bold`, and `tracking-widest`.
 - **Contrast:** NEVER use low-opacity text for critical info. Use high-contrast, solid colors.
 - **Typography:** Titles in `font-serif`, data/body in `font-inter`.
@@ -102,6 +111,7 @@ Planned features (**NOT** for current implementation):
 ### When to Ask
 
 Ask for confirmation if:
+
 - Requirements are ambiguous
 - Multiple viable approaches exist
 - Significant architectural decisions needed
@@ -123,6 +133,7 @@ Ask for confirmation if:
 ### Backend (Laravel)
 
 **Pattern:** Clean Architecture
+
 ```
 Controller → Service → Repository → Model
 ```
@@ -132,6 +143,7 @@ Controller → Service → Repository → Model
 ### Frontend (Vue + TypeScript)
 
 **Pattern:** Component-based Architecture
+
 ```
 View → Component → Composable → Store → Service → Model
 ```
@@ -149,6 +161,7 @@ View → Component → Composable → Store → Service → Model
 ## Tech Stack
 
 ### Frontend
+
 - Vue 3 + TypeScript
 - shadcn-vue (UI)
 - Tailwind CSS
@@ -156,9 +169,11 @@ View → Component → Composable → Store → Service → Model
 - Jest (Testing)
 
 ### Communication
+
 - Axios
 
 ### Backend
+
 - Laravel (latest stable)
 - MySQL
 - Pest (Testing)
@@ -171,6 +186,7 @@ View → Component → Composable → Store → Service → Model
 ## Quick Reference
 
 ### Do's ✓
+
 - Read AGENTS.MD and docs before starting
 - Use TypeScript strict mode
 - Follow defined architecture patterns
@@ -180,6 +196,7 @@ View → Component → Composable → Store → Service → Model
 - Ask for clarification when uncertain
 
 ### Don'ts ✗
+
 - Implement future features prematurely
 - Use `any` type without justification
 - Hardcode sensitive information
@@ -192,6 +209,7 @@ View → Component → Composable → Store → Service → Model
 ## Documentation
 
 **MVP Documentation:**
+
 - **[system-overview.md](./docs/system-overview.md)** - Logic flow and architecture overview
 - **[low-concept.md](./docs/low-concept.md)** - MVP overview and project scope
 - **[finance-tracking.md](./docs/finance-tracking.md)** - Detailed system design, data models, architecture
@@ -202,4 +220,5 @@ View → Component → Composable → Store → Service → Model
 - **[date-formatter.md](./docs/date-formatter.md)** - Date formatting utility documentation
 
 **Future Reference (NOT for MVP):**
+
 - **[mid-concept.md](file:///c:/Users/jhonb/Documents/Websites/spendlytic/docs/mid-concept.md)** - Extended concept and design philosophy (advanced features)
