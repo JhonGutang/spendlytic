@@ -1,4 +1,4 @@
-export type TransactionType = 'income' | 'expense';
+export type TransactionType = "income" | "expense";
 
 export interface Category {
   id: number;
@@ -28,6 +28,12 @@ export interface Summary {
   total_expenses: number;
   net_balance: number;
   transaction_count: number;
+  income_this_month: number;
+  expenses_this_month: number;
+  net_balance_this_month: number;
+  income_trend: number;
+  expense_trend: number;
+  net_balance_trend: number;
 }
 
 export interface ExpenseByCategory {
@@ -58,7 +64,7 @@ export interface TransactionFormData {
   type: TransactionType;
   amount: number | string;
   date: string;
-  category_id: number | null | '';
+  category_id: number | null | "";
   description?: string;
 }
 
@@ -81,7 +87,7 @@ export interface AnalyticsData {
   expenses: number[];
 }
 
-export type TimeRange = 'daily' | 'monthly' | 'yearly';
+export type TimeRange = "daily" | "monthly" | "yearly";
 
 export interface User {
   id: number;
@@ -124,7 +130,7 @@ export interface FeedbackHistory {
   rule_id: string;
   category_name?: string | null;
   template_id: string;
-  level: 'basic' | 'advanced';
+  level: "basic" | "advanced";
   explanation: string;
   suggestion: string;
   data: Record<string, any>;
@@ -172,7 +178,7 @@ export interface CsvImportItem {
     type: TransactionType;
   };
   is_duplicate: boolean;
-  status: 'valid' | 'error';
+  status: "valid" | "error";
   message?: string;
   skip?: boolean;
 }

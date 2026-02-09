@@ -2,7 +2,7 @@
 
 > **Document Type:** Detailed System Concepts & Design  
 > **Phase:** MVP - Adaptive Feedback Engine  
-> **Last Updated:** 2026-02-07
+> **Last Updated:** 2026-02-09
 
 ---
 
@@ -37,6 +37,7 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 ### User Personas
 
 **Primary User:** Individual seeking to improve financial habits through feedback
+
 - Needs to track transactions (manual or CSV upload)
 - Wants to understand spending patterns
 - Desires actionable feedback to improve behavior
@@ -45,6 +46,7 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 ### System Boundaries
 
 **In Scope (MVP):**
+
 - Transaction tracking (CSV upload or manual entry)
 - Pattern detection using 3 deterministic rules
 - Template-based feedback generation
@@ -53,6 +55,7 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 - Dashboard/CLI output for viewing results
 
 **Out of Scope (MVP):**
+
 - Machine learning or predictive modeling
 - Emotional or psychological inference
 - Real-time enforcement or spending blocks
@@ -69,9 +72,11 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 **Description:** Users can manually create transaction records for both income and expenses.
 
 **User Story:**
+
 > As a user, I want to manually add transactions so that I can track my income and expenses.
 
 **Acceptance Criteria:**
+
 - ✓ User can create a new transaction
 - ✓ User can specify transaction type (income or expense)
 - ✓ User can enter transaction amount (positive decimal number)
@@ -82,6 +87,7 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 - ✓ User receives confirmation of successful save
 
 **Validation Rules:**
+
 - Amount must be greater than 0
 - Date cannot be in the future
 - Category must be selected
@@ -94,9 +100,11 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 **Description:** Transactions are organized into categories for better tracking and analysis.
 
 **User Story:**
+
 > As a user, I want to categorize my transactions so that I can understand where my money is going.
 
 **Acceptance Criteria:**
+
 - ✓ System provides default categories
 - ✓ User can select from existing categories
 - ✓ User can create custom categories
@@ -106,6 +114,7 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 **Default Categories:**
 
 **Income:**
+
 - Salary
 - Freelance
 - Investment
@@ -113,6 +122,7 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 - Other Income
 
 **Expense:**
+
 - Food & Dining
 - Transportation
 - Shopping
@@ -129,9 +139,11 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 **Description:** Users see a summary of their financial status including totals and net balance.
 
 **User Story:**
+
 > As a user, I want to see a summary of my finances so that I can quickly understand my financial status.
 
 **Acceptance Criteria:**
+
 - ✓ Display total income (sum of all income transactions)
 - ✓ Display total expenses (sum of all expense transactions)
 - ✓ Display net balance (income - expenses)
@@ -139,14 +151,17 @@ The Finance Tracking System is an **engineering-focused finance tracker with an 
 - ✓ Summary can be filtered by date range (optional for MVP)
 
 **UI/UX Refinement:**
+
 - **Sidebar Navigation**: Fixed and non-scrollable sidebar for persistent access to main views.
 - **Micro-interactions**: Collapsible sidebar with smooth transitions.
 
 **Calculations:**
+
 ```
 Total Income = SUM(transactions WHERE type = 'income')
 Total Expenses = SUM(transactions WHERE type = 'expense')
 Net Balance = Total Income - Total Expenses
+Trend % = ((Current Month Total - Previous Month Total) / Previous Month Total) * 100
 ```
 
 ---
@@ -156,15 +171,18 @@ Net Balance = Total Income - Total Expenses
 **Description:** Simple charts provide visual representation of transaction data.
 
 **User Story:**
+
 > As a user, I want to see charts of my transactions so that I can visualize my spending patterns.
 
 **Acceptance Criteria:**
+
 - ✓ Display chart showing income vs expenses
 - ✓ Display chart showing expense breakdown by category
 - ✓ Charts update when transactions change
 - ✓ Charts are clear and easy to understand
 
 **Chart Types:**
+
 1. **Income vs Expense Bar Chart** - Compare total income and expenses
 2. **Expense Pie Chart** - Show expense distribution by category
 
@@ -175,9 +193,11 @@ Net Balance = Total Income - Total Expenses
 **Description:** Users can view a list of all their transactions.
 
 **User Story:**
+
 > As a user, I want to see a list of my transactions so that I can review my financial history.
 
 **Acceptance Criteria:**
+
 - ✓ Display all transactions in a list/table
 - ✓ Show date, amount, category, type, and description
 - ✓ Sort by date (newest first by default)
@@ -193,37 +213,39 @@ Net Balance = Total Income - Total Expenses
 
 #### `users` Table
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `name` | VARCHAR(255) | NOT NULL | User's full name |
-| `email` | VARCHAR(255) | NOT NULL, UNIQUE | User's email address |
-| `password` | VARCHAR(255) | NOT NULL | Hashed password |
-| `created_at` | TIMESTAMP | NOT NULL | Record creation time |
-| `updated_at` | TIMESTAMP | NOT NULL | Record update time |
+| Column       | Type            | Constraints                 | Description          |
+| ------------ | --------------- | --------------------------- | -------------------- |
+| `id`         | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier    |
+| `name`       | VARCHAR(255)    | NOT NULL                    | User's full name     |
+| `email`      | VARCHAR(255)    | NOT NULL, UNIQUE            | User's email address |
+| `password`   | VARCHAR(255)    | NOT NULL                    | Hashed password      |
+| `created_at` | TIMESTAMP       | NOT NULL                    | Record creation time |
+| `updated_at` | TIMESTAMP       | NOT NULL                    | Record update time   |
 
 ---
 
 #### `categories` Table
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `name` | VARCHAR(100) | NOT NULL, UNIQUE | Category name |
-| `type` | ENUM('income', 'expense') | NOT NULL | Category type |
-| `color` | VARCHAR(7) | NULLABLE | Hex color code (e.g., #FF5733) |
-| `icon` | VARCHAR(50) | NULLABLE | Icon identifier |
-| `is_default` | BOOLEAN | DEFAULT FALSE | System-provided category |
-| `user_id` | BIGINT UNSIGNED | NULLABLE, FOREIGN KEY | Owner of the category (NULL for default) |
-| `created_at` | TIMESTAMP | NOT NULL | Record creation time |
-| `updated_at` | TIMESTAMP | NOT NULL | Record update time |
+| Column       | Type                      | Constraints                 | Description                              |
+| ------------ | ------------------------- | --------------------------- | ---------------------------------------- |
+| `id`         | BIGINT UNSIGNED           | PRIMARY KEY, AUTO_INCREMENT | Unique identifier                        |
+| `name`       | VARCHAR(100)              | NOT NULL, UNIQUE            | Category name                            |
+| `type`       | ENUM('income', 'expense') | NOT NULL                    | Category type                            |
+| `color`      | VARCHAR(7)                | NULLABLE                    | Hex color code (e.g., #FF5733)           |
+| `icon`       | VARCHAR(50)               | NULLABLE                    | Icon identifier                          |
+| `is_default` | BOOLEAN                   | DEFAULT FALSE               | System-provided category                 |
+| `user_id`    | BIGINT UNSIGNED           | NULLABLE, FOREIGN KEY       | Owner of the category (NULL for default) |
+| `created_at` | TIMESTAMP                 | NOT NULL                    | Record creation time                     |
+| `updated_at` | TIMESTAMP                 | NOT NULL                    | Record update time                       |
 
 **Indexes:**
+
 - PRIMARY KEY on `id`
 - FOREIGN KEY on `user_id` REFERENCES `users(id)` ON DELETE CASCADE
 - INDEX on `type`
 
 **Sample Data:**
+
 ```sql
 INSERT INTO categories (name, type, is_default) VALUES
 ('Salary', 'income', true),
@@ -235,19 +257,20 @@ INSERT INTO categories (name, type, is_default) VALUES
 
 #### `transactions` Table
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `type` | ENUM('income', 'expense') | NOT NULL | Transaction type |
-| `amount` | DECIMAL(10, 2) | NOT NULL, CHECK (amount > 0) | Transaction amount |
-| `date` | DATE | NOT NULL | Transaction date |
-| `category_id` | BIGINT UNSIGNED | NOT NULL, FOREIGN KEY | Reference to categories |
-| `description` | TEXT | NULLABLE | Optional notes |
-| `user_id` | BIGINT UNSIGNED | NOT NULL, FOREIGN KEY | Owner of the transaction |
-| `created_at` | TIMESTAMP | NOT NULL | Record creation time |
-| `updated_at` | TIMESTAMP | NOT NULL | Record update time |
+| Column        | Type                      | Constraints                  | Description              |
+| ------------- | ------------------------- | ---------------------------- | ------------------------ |
+| `id`          | BIGINT UNSIGNED           | PRIMARY KEY, AUTO_INCREMENT  | Unique identifier        |
+| `type`        | ENUM('income', 'expense') | NOT NULL                     | Transaction type         |
+| `amount`      | DECIMAL(10, 2)            | NOT NULL, CHECK (amount > 0) | Transaction amount       |
+| `date`        | DATE                      | NOT NULL                     | Transaction date         |
+| `category_id` | BIGINT UNSIGNED           | NOT NULL, FOREIGN KEY        | Reference to categories  |
+| `description` | TEXT                      | NULLABLE                     | Optional notes           |
+| `user_id`     | BIGINT UNSIGNED           | NOT NULL, FOREIGN KEY        | Owner of the transaction |
+| `created_at`  | TIMESTAMP                 | NOT NULL                     | Record creation time     |
+| `updated_at`  | TIMESTAMP                 | NOT NULL                     | Record update time       |
 
 **Indexes:**
+
 - PRIMARY KEY on `id`
 - FOREIGN KEY on `category_id` REFERENCES `categories(id)` ON DELETE RESTRICT
 - FOREIGN KEY on `user_id` REFERENCES `users(id)` ON DELETE CASCADE
@@ -257,6 +280,7 @@ INSERT INTO categories (name, type, is_default) VALUES
 - INDEX on `user_id`
 
 **Sample Data:**
+
 ```sql
 INSERT INTO transactions (type, amount, date, category_id, description) VALUES
 ('income', 5000.00, '2026-01-15', 1, 'Monthly salary'),
@@ -275,6 +299,7 @@ categories (1) ──────< (many) transactions
 ```
 
 **Relationship Rules:**
+
 - A user can own multiple custom categories and many transactions.
 - One category can have many transactions.
 - Each transaction belongs to exactly one category and one user.
@@ -321,6 +346,7 @@ categories (1) ──────< (many) transactions
    - Example: `Transaction`, `Category`
 
 **Example Flow:**
+
 ```
 User Request
     ↓
@@ -375,6 +401,7 @@ Database
    - Example: `Transaction`, `Category`, `Summary`
 
 **Example Flow:**
+
 ```
 User Interaction
     ↓
@@ -395,37 +422,37 @@ Backend
 
 #### Authentication (Public)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/register` | Register a new user |
-| POST | `/api/login` | Log in and receive token |
+| Method | Endpoint        | Description              |
+| ------ | --------------- | ------------------------ |
+| POST   | `/api/register` | Register a new user      |
+| POST   | `/api/login`    | Log in and receive token |
 
 #### Authentication (Protected)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/logout` | Revoke current token |
-| GET | `/api/me` | Get authenticated user info |
+| Method | Endpoint      | Description                 |
+| ------ | ------------- | --------------------------- |
+| POST   | `/api/logout` | Revoke current token        |
+| GET    | `/api/me`     | Get authenticated user info |
 
 #### Transactions (Protected)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/transactions` | List all transactions |
-| POST | `/api/transactions` | Create new transaction |
-| GET | `/api/transactions/{id}` | Get single transaction |
-| PUT | `/api/transactions/{id}` | Update transaction |
-| DELETE | `/api/transactions/{id}` | Delete transaction |
-| GET | `/api/transactions/summary` | Get summary (totals, balance) |
+| Method | Endpoint                    | Description                   |
+| ------ | --------------------------- | ----------------------------- |
+| GET    | `/api/transactions`         | List all transactions         |
+| POST   | `/api/transactions`         | Create new transaction        |
+| GET    | `/api/transactions/{id}`    | Get single transaction        |
+| PUT    | `/api/transactions/{id}`    | Update transaction            |
+| DELETE | `/api/transactions/{id}`    | Delete transaction            |
+| GET    | `/api/transactions/summary` | Get summary (totals, balance) |
 
 #### Categories (Protected)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/categories` | List all categories |
-| POST | `/api/categories` | Create new category |
-| GET | `/api/categories/{id}` | Get single category |
-| PUT | `/api/categories/{id}` | Update category |
+| Method | Endpoint               | Description                          |
+| ------ | ---------------------- | ------------------------------------ |
+| GET    | `/api/categories`      | List all categories                  |
+| POST   | `/api/categories`      | Create new category                  |
+| GET    | `/api/categories/{id}` | Get single category                  |
+| PUT    | `/api/categories/{id}` | Update category                      |
 | DELETE | `/api/categories/{id}` | Delete category (if no transactions) |
 
 ---
@@ -439,12 +466,14 @@ Backend
 **Purpose:** Primary view showing financial overview
 
 **Components:**
+
 - Summary cards (Total Income, Total Expenses, Net Balance)
 - Income vs Expense bar chart
 - Expense breakdown pie chart
 - Quick add transaction button
 
 **Layout:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  Dashboard                              │
@@ -471,11 +500,13 @@ Backend
 **Purpose:** View and manage all transactions
 
 **Components:**
+
 - Transaction table/list
 - Filter/sort controls
 - Add/Edit/Delete actions
 
 **Layout:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  Transactions          [+ Add]          │
@@ -494,6 +525,7 @@ Backend
 **Purpose:** Add or edit transaction
 
 **Fields:**
+
 - Type (Income/Expense) - Radio buttons or toggle
 - Amount - Number input
 - Date - Date picker
@@ -501,6 +533,7 @@ Backend
 - Description - Text area (optional)
 
 **Actions:**
+
 - Save
 - Cancel
 
@@ -563,15 +596,16 @@ Backend
 
 ```typescript
 interface TransactionValidation {
-  type: 'income' | 'expense';           // Required, must be one of two values
-  amount: number;                        // Required, must be > 0, max 2 decimals
-  date: Date;                           // Required, cannot be future date
-  category_id: number;                  // Required, must exist in categories
-  description?: string;                 // Optional, max 1000 characters
+  type: "income" | "expense"; // Required, must be one of two values
+  amount: number; // Required, must be > 0, max 2 decimals
+  date: Date; // Required, cannot be future date
+  category_id: number; // Required, must exist in categories
+  description?: string; // Optional, max 1000 characters
 }
 ```
 
 **Backend Validation (Laravel):**
+
 ```php
 $rules = [
     'type' => 'required|in:income,expense',
@@ -583,6 +617,7 @@ $rules = [
 ```
 
 **Frontend Validation (Vue):**
+
 - Real-time validation on input
 - Display error messages below fields
 - Disable submit button until valid
@@ -593,10 +628,10 @@ $rules = [
 
 ```typescript
 interface CategoryValidation {
-  name: string;                         // Required, unique, max 100 chars
-  type: 'income' | 'expense';           // Required
-  color?: string;                       // Optional, hex format
-  icon?: string;                        // Optional
+  name: string; // Required, unique, max 100 chars
+  type: "income" | "expense"; // Required
+  color?: string; // Optional, hex format
+  icon?: string; // Optional
 }
 ```
 
@@ -616,18 +651,18 @@ interface Summary {
 
 function calculateSummary(transactions: Transaction[]): Summary {
   const income = transactions
-    .filter(t => t.type === 'income')
+    .filter((t) => t.type === "income")
     .reduce((sum, t) => sum + t.amount, 0);
-  
+
   const expenses = transactions
-    .filter(t => t.type === 'expense')
+    .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + t.amount, 0);
-  
+
   return {
     totalIncome: income,
     totalExpenses: expenses,
     netBalance: income - expenses,
-    transactionCount: transactions.length
+    transactionCount: transactions.length,
   };
 }
 ```
@@ -693,6 +728,7 @@ function calculateSummary(transactions: Transaction[]): Summary {
 - Trend analysis
 
 **Technical Dependencies:**
+
 - Charting library enhancements
 - Report generation service
 - Export functionality
@@ -706,6 +742,7 @@ function calculateSummary(transactions: Transaction[]): Summary {
 - Anomaly detection
 
 **Technical Dependencies:**
+
 - Machine learning integration
 - Historical data analysis
 - Prediction algorithms
@@ -719,6 +756,7 @@ function calculateSummary(transactions: Transaction[]): Summary {
 - Goal tracking
 
 **Technical Dependencies:**
+
 - Analytics engine
 - Recommendation system
 - Goal management features
@@ -732,6 +770,7 @@ function calculateSummary(transactions: Transaction[]): Summary {
 - Recurring transaction templates
 
 **Technical Dependencies:**
+
 - Task management system
 - Notification service
 - Scheduling system
@@ -745,6 +784,7 @@ function calculateSummary(transactions: Transaction[]): Summary {
 - Overspending alerts
 
 **Technical Dependencies:**
+
 - Budget management service
 - Alert system
 - Comparison algorithms
@@ -758,6 +798,7 @@ function calculateSummary(transactions: Transaction[]): Summary {
 - Accessibility themes
 
 **Technical Dependencies:**
+
 - Theme management system
 - CSS variable architecture
 - User preference storage

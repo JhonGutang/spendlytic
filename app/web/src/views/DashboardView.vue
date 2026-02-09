@@ -41,9 +41,10 @@
                 <p class="text-emerald-100 uppercase tracking-[0.2em] text-xs font-bold font-inter">Net Balance</p>
                 <div class="flex items-baseline gap-2">
                    <h2 class="text-5xl md:text-6xl font-serif text-white">{{ formattedBalance }}</h2>
-                   <div class="flex items-center text-emerald-300 text-sm font-medium px-2 py-0.5 bg-emerald-800/40 rounded-full">
-                      <TrendingUp class="w-3 h-3 mr-1" />
-                      <span>+2.4%</span>
+                   <div :class="['flex items-center text-sm font-medium px-2 py-0.5 rounded-full', netBalanceTrendColor]">
+                      <TrendingUp v-if="transactionStore.summary.net_balance_trend >= 0" class="w-3 h-3 mr-1" />
+                      <TrendingDown v-else class="w-3 h-3 mr-1" />
+                      <span>{{ netBalanceTrend }}</span>
                    </div>
                 </div>
                 <div class="flex gap-8 pt-4">
@@ -65,11 +66,11 @@
                    <span class="text-xs text-emerald-100 font-bold uppercase tracking-widest font-inter">Financial Health</span>
                    <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
                 </div>
-                <div class="text-4xl font-serif text-white mb-2">Excellent</div>
+                <div class="text-4xl font-serif text-white mb-2">{{ healthLabel }}</div>
                 <div class="w-full bg-white/10 h-1.5 rounded-full mt-4 overflow-hidden">
-                   <div class="bg-emerald-400 h-full w-[88%] rounded-full shadow-[0_0_8px_rgba(52,211,153,0.5)]"></div>
+                   <div :class="['h-full rounded-full transition-all duration-1000', healthColor]" :style="{ width: `${healthScore}%` }"></div>
                 </div>
-                <p class="text-[10px] text-emerald-200 mt-3 font-medium italic">"Your disciplined saving is blooming."</p>
+                <p class="text-[10px] text-emerald-200 mt-3 font-medium italic">"{{ (feedbackStore.currentProgress?.improvement_score ?? 0) >= 80 ? 'Your disciplined saving is blooming.' : 'Keep nurturing your financial habits.' }}"</p>
               </div>
             </div>
           </CardContent>
@@ -86,27 +87,32 @@
           <CardContent class="flex-1 overflow-hidden">
              <!-- Simplified list for sidebar look -->
              <div class="space-y-4 mt-2">
-                <div class="flex items-start gap-3 p-3 rounded-2xl bg-emerald-50/50 border border-emerald-100/20 group/item hover:bg-white transition-colors">
-                   <div class="p-2 rounded-xl bg-emerald-100 text-emerald-700">
-                      <TrendingUp class="w-4 h-4" />
-                   </div>
-                   <div>
-                      <p class="text-xs font-bold text-emerald-900 group-hover:text-emerald-700 transition-colors uppercase tracking-tight">Category Optimization</p>
-                      <p class="text-sm text-emerald-950/70 mt-1 line-clamp-2">You've reached 85% of your Dining budget early this week.</p>
-                   </div>
-                </div>
-                <div class="flex items-start gap-3 p-3 rounded-2xl bg-rose-50/30 border border-rose-100/20 group/item hover:bg-white transition-colors">
-                   <div class="p-2 rounded-xl bg-rose-100 text-rose-700">
-                      <Wallet class="w-4 h-4" />
-                   </div>
-                   <div>
-                      <p class="text-xs font-bold text-rose-900 group-hover:text-rose-700 transition-colors uppercase tracking-tight">Spending Spike</p>
-                      <p class="text-sm text-emerald-950/70 mt-1 line-clamp-2">Unusual activity detected in Utilities today.</p>
-                   </div>
+                <template v-if="feedbackStore.latestFeedback.length > 0">
+                  <div 
+                    v-for="item in feedbackStore.latestFeedback" 
+                    :key="item.id"
+                    class="flex items-start gap-3 p-3 rounded-2xl bg-emerald-50/50 border border-emerald-100/20 group/item hover:bg-white transition-colors"
+                  >
+                     <div :class="['p-2 rounded-xl', item.level === 'advanced' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700']">
+                        <TrendingUp v-if="item.rule_id === 'spending_spike' || item.rule_id === 'category_overspend'" class="w-4 h-4" />
+                        <Wallet v-else class="w-4 h-4" />
+                     </div>
+                     <div>
+                        <p class="text-xs font-bold text-emerald-900 group-hover:text-emerald-700 transition-colors uppercase tracking-tight">{{ item.rule_id.replace(/_/g, ' ') }}</p>
+                        <p class="text-sm text-emerald-950/70 mt-1 line-clamp-2">{{ item.explanation }}</p>
+                     </div>
+                  </div>
+                </template>
+                <div v-else class="py-10 text-center">
+                  <p class="text-[10px] text-emerald-800/40 uppercase font-black tracking-widest">No active insights</p>
                 </div>
                 <div class="pt-2">
-                   <button class="w-full h-11 border border-dashed border-emerald-400 rounded-2xl text-[10px] text-emerald-800 uppercase tracking-[0.2em] font-black hover:bg-emerald-50 transition-all">
-                      Evaluate Rules Now
+                   <button 
+                    @click="feedbackStore.evaluateRules()"
+                    :disabled="feedbackStore.loading"
+                    class="w-full h-11 border border-dashed border-emerald-400 rounded-2xl text-[10px] text-emerald-800 uppercase tracking-[0.2em] font-black hover:bg-emerald-50 transition-all disabled:opacity-50"
+                   >
+                      {{ feedbackStore.loading ? 'Evaluating...' : 'Evaluate Rules Now' }}
                    </button>
                 </div>
              </div>
@@ -255,7 +261,8 @@
 import { onMounted, computed, ref } from 'vue';
 import { useTransactionStore } from '../stores/transactionStore';
 import { useCategoryStore } from '../stores/categoryStore';
-import { TrendingUp, Wallet, ArrowUpRight, ArrowDownRight, Layers } from 'lucide-vue-next';
+import { useFeedbackStore } from '../stores/feedbackStore';
+import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight, Layers } from 'lucide-vue-next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RouterLink } from 'vue-router';
 import { formatDateSafe } from '@/utils';
@@ -268,10 +275,11 @@ import type { TimeRange } from '@/types';
 
 const transactionStore = useTransactionStore();
 const categoryStore = useCategoryStore();
+const feedbackStore = useFeedbackStore();
 
 const selectedTimeRange = ref<TimeRange>('daily');
 
-const isInitialLoad = !transactionStore.isSummaryFetched || !categoryStore.isCategoriesFetched;
+const isInitialLoad = !transactionStore.isSummaryFetched || !categoryStore.isCategoriesFetched || !feedbackStore.isFeedbackFetched;
 const isLoading = ref(isInitialLoad);
 
 const formattedIncome = computed(() => 
@@ -295,6 +303,32 @@ const formattedBalance = computed(() =>
   })
 );
 
+const netBalanceTrend = computed(() => {
+  const trend = transactionStore.summary.net_balance_trend || 0;
+  return trend > 0 ? `+${trend.toFixed(1)}%` : `${trend.toFixed(1)}%`;
+});
+
+const netBalanceTrendColor = computed(() => {
+  const trend = transactionStore.summary.net_balance_trend || 0;
+  return trend >= 0 ? 'text-emerald-300 bg-emerald-800/40' : 'text-rose-300 bg-rose-800/40';
+});
+
+const healthScore = computed(() => feedbackStore.currentProgress?.improvement_score || 0);
+
+const healthLabel = computed(() => {
+  const score = healthScore.value;
+  if (score >= 80) return 'Excellent';
+  if (score >= 50) return 'Stable';
+  return 'Attention';
+});
+
+const healthColor = computed(() => {
+  const score = healthScore.value;
+  if (score >= 80) return 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]';
+  if (score >= 50) return 'bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]';
+  return 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]';
+});
+
 function formatTransactionDate(dateString: string): string {
   if (dateString.includes('-')) {
     const [year, month, day] = dateString.split('-');
@@ -311,6 +345,8 @@ onMounted(async () => {
       await Promise.all([
         transactionStore.fetchSummary(),
         categoryStore.fetchCategories(),
+        feedbackStore.fetchFeedback(),
+        feedbackStore.fetchProgress(),
         minLoaderTime
       ]);
     } finally {
@@ -319,6 +355,8 @@ onMounted(async () => {
   } else {
     transactionStore.fetchSummary();
     categoryStore.fetchCategories();
+    feedbackStore.fetchFeedback();
+    feedbackStore.fetchProgress();
   }
 });
 </script>

@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class TransactionRepository
@@ -19,8 +21,13 @@ class TransactionRepository
 
     /**
      * Get filtered and paginated transactions.
+     *
+     * @param int $userId
+     * @param array $filters
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function getFilteredPaginated(int $userId, array $filters, int $perPage = 10)
+    public function getFilteredPaginated(int $userId, array $filters, int $perPage = 10): LengthAwarePaginator
     {
         $query = Transaction::with('category')
             ->where('user_id', $userId)
@@ -148,11 +155,50 @@ class TransactionRepository
         $income = (clone $query)->where('type', 'income')->sum('amount');
         $expenses = (clone $query)->where('type', 'expense')->sum('amount');
 
+        // Calculate trends (Month over Month)
+        $thisMonth = Carbon::now()->startOfMonth();
+        $lastMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfLastMonth = Carbon::now()->subMonth()->endOfMonth();
+
+        $incomeThisMonth = (clone $query)->where('type', 'income')
+            ->whereDate('date', '>=', $thisMonth)
+            ->sum('amount');
+
+        $incomeLastMonth = (clone $query)->where('type', 'income')
+            ->whereDate('date', '>=', $lastMonth)
+            ->whereDate('date', '<=', $endOfLastMonth)
+            ->sum('amount');
+
+        $expensesThisMonth = (clone $query)->where('type', 'expense')
+            ->whereDate('date', '>=', $thisMonth)
+            ->sum('amount');
+
+        $expensesLastMonth = (clone $query)->where('type', 'expense')
+            ->whereDate('date', '>=', $lastMonth)
+            ->whereDate('date', '<=', $endOfLastMonth)
+            ->sum('amount');
+
+        $calculateTrend = function ($current, $previous) {
+            if ($previous == 0) {
+                return $current > 0 ? 100 : 0;
+            }
+            return (($current - $previous) / $previous) * 100;
+        };
+
+        $netBalanceThisMonth = $incomeThisMonth - $expensesThisMonth;
+        $netBalanceLastMonth = $incomeLastMonth - $expensesLastMonth;
+
         return [
             'total_income' => (float) $income,
             'total_expenses' => (float) $expenses,
             'net_balance' => (float) ($income - $expenses),
             'transaction_count' => (clone $query)->count(),
+            'income_this_month' => (float) $incomeThisMonth,
+            'expenses_this_month' => (float) $expensesThisMonth,
+            'net_balance_this_month' => (float) $netBalanceThisMonth,
+            'income_trend' => (float) $calculateTrend($incomeThisMonth, $incomeLastMonth),
+            'expense_trend' => (float) $calculateTrend($expensesThisMonth, $expensesLastMonth),
+            'net_balance_trend' => (float) $calculateTrend($netBalanceThisMonth, $netBalanceLastMonth),
         ];
     }
 
@@ -190,7 +236,7 @@ class TransactionRepository
             ->groupBy('categories.name')
             ->get()
             ->pluck('total', 'category_name')
-            ->map(fn ($total) => (float) $total)
+            ->map(fn($total) => (float) $total)
             ->toArray();
 
         // Also get total amount for small transactions as needed for Rule 3 metadata
