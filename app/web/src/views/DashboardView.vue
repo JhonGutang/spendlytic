@@ -30,89 +30,114 @@
       <!-- Main Bento Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Hero: Net Balance & Score (Tier 1) -->
-        <Card class="relative lg:col-span-8 bg-gradient-to-br from-emerald-900 to-emerald-950 border-0 shadow-xl shadow-emerald-900/20 text-[#FDFCF8] overflow-hidden group">
-          <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Layers class="w-48 h-48 -mr-16 -mt-16" />
+        <!-- Row 1: Three Equal Columns -->
+        
+        <!-- 1. Net Balance (Compact & Dense) -->
+        <Card class="relative lg:col-span-4 bg-emerald-950 border-0 shadow-lg shadow-emerald-900/20 text-[#FDFCF8] overflow-hidden group flex flex-col justify-between h-full min-h-[280px]">
+          <!-- Deco -->
+          <div class="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+            <Layers class="w-32 h-32 -mr-10 -mt-10" />
           </div>
-          <CardContent class="p-8 md:p-10 relative z-10">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
-              <div class="space-y-4">
-                <p class="text-emerald-100 uppercase tracking-[0.2em] text-xs font-bold font-inter">Net Balance</p>
-                <div class="flex items-baseline gap-2">
-                   <h2 class="text-5xl md:text-6xl font-serif text-white">{{ formattedBalance }}</h2>
-                   <div :class="['flex items-center text-sm font-medium px-2 py-0.5 rounded-full', netBalanceTrendColor]">
-                      <TrendingUp v-if="transactionStore.summary.net_balance_trend >= 0" class="w-3 h-3 mr-1" />
-                      <TrendingDown v-else class="w-3 h-3 mr-1" />
-                      <span>{{ netBalanceTrend }}</span>
-                   </div>
-                </div>
-                <div class="flex gap-8 pt-4">
-                  <div>
-                    <p class="text-emerald-200 text-[10px] uppercase font-bold tracking-widest mb-1 italic">Income This Period</p>
-                    <p class="text-xl font-serif text-emerald-50">{{ formattedIncome }}</p>
-                  </div>
-                  <div class="w-px h-10 bg-emerald-800/50"></div>
-                  <div>
-                    <p class="text-emerald-200 text-[10px] uppercase font-bold tracking-widest mb-1 italic">Expenses This Period</p>
-                    <p class="text-xl font-serif text-rose-200">{{ formattedExpenses }}</p>
-                  </div>
-                </div>
-              </div>
 
-              <!-- Behavioral Health Mini-Widget -->
-              <div class="bg-white/5 border border-white/10 backdrop-blur-md p-6 rounded-3xl md:w-64">
-                <div class="flex items-center justify-between mb-4">
-                   <span class="text-xs text-emerald-100 font-bold uppercase tracking-widest font-inter">Financial Health</span>
-                   <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                </div>
-                <div class="text-4xl font-serif text-white mb-2">{{ healthLabel }}</div>
-                <div class="w-full bg-white/10 h-1.5 rounded-full mt-4 overflow-hidden">
-                   <div :class="['h-full rounded-full transition-all duration-1000', healthColor]" :style="{ width: `${healthScore}%` }"></div>
-                </div>
-                <p class="text-[10px] text-emerald-200 mt-3 font-medium italic">"{{ (feedbackStore.currentProgress?.improvement_score ?? 0) >= 80 ? 'Your disciplined saving is blooming.' : 'Keep nurturing your financial habits.' }}"</p>
+          <CardContent class="p-6 relative z-10 flex flex-col h-full justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                 <p class="text-emerald-200/80 uppercase tracking-[0.2em] text-[10px] font-bold font-inter">Net Balance</p>
+                 <div :class="['flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full', netBalanceTrendColor]">
+                    <TrendingUp v-if="transactionStore.summary.net_balance_trend >= 0" class="w-3 h-3 mr-1" />
+                    <TrendingDown v-else class="w-3 h-3 mr-1" />
+                    <span>{{ netBalanceTrend }}</span>
+                 </div>
+              </div>
+              <h2 class="text-4xl lg:text-5xl font-serif text-white tracking-tight">{{ formattedBalance }}</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 pt-6 border-t border-emerald-800/30">
+              <div>
+                <p class="text-emerald-400 text-[10px] uppercase font-bold tracking-widest mb-1">Income</p>
+                <p class="text-lg font-serif text-emerald-50">{{ formattedIncome }}</p>
+              </div>
+              <div class="pl-4 border-l border-emerald-800/30">
+                <p class="text-rose-300 text-[10px] uppercase font-bold tracking-widest mb-1">Expenses</p>
+                <p class="text-lg font-serif text-rose-100">{{ formattedExpenses }}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <!-- Secondary: Behavioral Insights Quick Look (Tier 1/2) -->
-        <Card class="lg:col-span-4 bg-white/60 backdrop-blur-xl border border-emerald-100/50 shadow-sm flex flex-col group hover:shadow-md transition-all">
-          <CardHeader class="pb-2">
+        <!-- 2. Financial Health (Visual Score) -->
+        <Card class="relative lg:col-span-4 bg-gradient-to-b from-emerald-900 to-emerald-950 border-0 shadow-lg shadow-emerald-900/20 text-[#FDFCF8] overflow-hidden group flex flex-col justify-between h-full min-h-[280px]">
+          <!-- Deco -->
+          <div class="absolute bottom-0 left-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+            <div class="w-32 h-32 rounded-full border-[12px] border-emerald-100 -ml-16 -mb-16"></div>
+          </div>
+
+          <CardContent class="p-6 relative z-10 flex flex-col h-full justify-between">
              <div class="flex items-center justify-between">
-                <CardTitle class="text-lg font-serif text-emerald-950">Active Insights</CardTitle>
-                                <RouterLink to="/insights" class="text-[10px] text-emerald-800 hover:text-emerald-950 uppercase tracking-widest font-black transition-colors">View All →</RouterLink>
+                <span class="text-[10px] text-emerald-200/80 font-bold uppercase tracking-widest font-inter">Financial Health</span>
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+             </div>
+             
+             <div class="py-4">
+               <div class="flex justify-between items-end mb-2">
+                  <div class="text-3xl font-serif text-white">{{ healthLabel }}</div>
+                  <div class="text-xl font-serif text-emerald-300">{{ healthScore }}<span class="text-sm text-emerald-600">/100</span></div>
+               </div>
+               
+               <div class="w-full bg-black/30 h-1.5 rounded-full overflow-hidden backdrop-blur-sm mb-4">
+                  <div :class="['h-full rounded-full transition-all duration-1000', healthColor]" :style="{ width: `${healthScore}%` }"></div>
+               </div>
+
+               <p class="text-xs text-emerald-200/70 font-medium italic leading-relaxed">"{{ (feedbackStore.currentProgress?.improvement_score ?? 0) >= 80 ? 'Your disciplined saving is blooming.' : 'Keep nurturing your financial habits.' }}"</p>
+             </div>
+
+             <div class="pt-4 border-t border-emerald-800/30 flex items-center justify-between">
+                <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Status</span>
+                <span class="text-xs font-serif text-white">{{ (feedbackStore.currentProgress?.improvement_score ?? 0) >= 50 ? 'On Track' : 'Needs Care' }}</span>
+             </div>
+          </CardContent>
+        </Card>
+
+        <!-- 3. Active Insights (Equal Priority) -->
+        <Card class="lg:col-span-4 bg-white/80 backdrop-blur-xl border border-emerald-100/50 shadow-sm flex flex-col h-full min-h-[280px]">
+          <CardHeader class="pb-2 pt-6 px-6">
+             <div class="flex items-center justify-between">
+                <CardTitle class="text-base font-serif text-emerald-950">Active Insights</CardTitle>
+                <RouterLink to="/insights" class="text-[9px] text-emerald-800 hover:text-emerald-950 uppercase tracking-widest font-black transition-colors border-b border-emerald-800/20 hover:border-emerald-950">View All</RouterLink>
              </div>
           </CardHeader>
-          <CardContent class="flex-1 overflow-hidden">
-             <!-- Simplified list for sidebar look -->
-             <div class="space-y-4 mt-2">
+          <CardContent class="flex-1 overflow-y-auto px-6 pb-6 scrollbar-hide">
+             <div class="space-y-3 mt-2">
                 <template v-if="feedbackStore.latestFeedback.length > 0">
                   <div 
-                    v-for="item in feedbackStore.latestFeedback" 
+                    v-for="item in feedbackStore.latestFeedback.slice(0, 2)" 
                     :key="item.id"
-                    class="flex items-start gap-3 p-3 rounded-2xl bg-emerald-50/50 border border-emerald-100/20 group/item hover:bg-white transition-colors"
+                    class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/50 border border-emerald-100/20 group/item hover:bg-white transition-colors"
                   >
-                     <div :class="['p-2 rounded-xl', item.level === 'advanced' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700']">
-                        <TrendingUp v-if="item.rule_id === 'spending_spike' || item.rule_id === 'category_overspend'" class="w-4 h-4" />
-                        <Wallet v-else class="w-4 h-4" />
+                     <div :class="['p-1.5 rounded-lg shrink-0 mt-0.5', item.level === 'advanced' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700']">
+                        <TrendingUp v-if="item.rule_id === 'spending_spike' || item.rule_id === 'category_overspend'" class="w-3.5 h-3.5" />
+                        <Wallet v-else class="w-3.5 h-3.5" />
                      </div>
                      <div>
-                        <p class="text-xs font-bold text-emerald-900 group-hover:text-emerald-700 transition-colors uppercase tracking-tight">{{ item.rule_id.replace(/_/g, ' ') }}</p>
-                        <p class="text-sm text-emerald-950/70 mt-1 line-clamp-2">{{ item.explanation }}</p>
+                        <p class="text-[10px] font-bold text-emerald-900 uppercase tracking-wide leading-tight">{{ item.rule_id.replace(/_/g, ' ') }}</p>
+                        <p class="text-xs text-emerald-950/70 mt-1 line-clamp-2 leading-relaxed">{{ item.explanation }}</p>
                      </div>
                   </div>
                 </template>
-                <div v-else class="py-10 text-center">
+                <div v-else class="py-8 text-center flex flex-col items-center justify-center h-full">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center mb-2">
+                    <Wallet class="w-4 h-4 text-emerald-200" />
+                  </div>
                   <p class="text-[10px] text-emerald-800/40 uppercase font-black tracking-widest">No active insights</p>
                 </div>
-                <div class="pt-2">
+                
+                <div v-if="feedbackStore.latestFeedback.length > 0" class="pt-2">
                    <button 
                     @click="feedbackStore.evaluateRules()"
                     :disabled="feedbackStore.loading"
-                    class="w-full h-11 border border-dashed border-emerald-400 rounded-2xl text-[10px] text-emerald-800 uppercase tracking-[0.2em] font-black hover:bg-emerald-50 transition-all disabled:opacity-50"
+                    class="w-full h-9 border border-dashed border-emerald-400/50 rounded-xl text-[9px] text-emerald-700 uppercase tracking-[0.2em] font-black hover:bg-emerald-50 transition-all disabled:opacity-50"
                    >
-                      {{ feedbackStore.loading ? 'Evaluating...' : 'Evaluate Rules Now' }}
+                      {{ feedbackStore.loading ? 'Evaluating...' : 'Refresh Analysis' }}
                    </button>
                 </div>
              </div>
@@ -126,15 +151,15 @@
             <div class="flex items-center bg-emerald-100/30 p-1 rounded-full">
                <button 
                  @click="selectedTimeRange = 'daily'"
-                 :class="['px-5 h-9 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'daily' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
+                 :class="['px-5 h-11 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'daily' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
                >Daily</button>
                <button 
                  @click="selectedTimeRange = 'monthly'"
-                 :class="['px-5 h-9 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'monthly' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
+                 :class="['px-5 h-11 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'monthly' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
                >Monthly</button>
                <button 
                  @click="selectedTimeRange = 'yearly'"
-                 :class="['px-5 h-9 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'yearly' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
+                 :class="['px-5 h-11 text-[10px] font-bold uppercase tracking-widest rounded-full transition-all', selectedTimeRange === 'yearly' ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-800 hover:text-emerald-950']"
                >Yearly</button>
             </div>
           </CardHeader>

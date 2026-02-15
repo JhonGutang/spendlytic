@@ -295,7 +295,7 @@ class FeedbackEngineService
         }
 
         if (Str::contains($placeholder, ['amount', 'total', 'average', 'limit', 'budget', 'target'])) {
-            return '₱'.number_format((float) $value, 2);
+            return number_format((float) $value, 2);
         }
 
         if (Str::contains($placeholder, 'percentage')) {

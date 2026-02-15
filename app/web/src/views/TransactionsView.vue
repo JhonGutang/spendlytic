@@ -250,7 +250,7 @@ onMounted(async () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              class="h-9 px-4 rounded-full text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors font-bold uppercase tracking-wider text-[10px]"
+              class="h-11 px-6 rounded-full text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors font-bold uppercase tracking-wider text-[10px]"
               @click="transactionStore.fetchTransactions({ 
                 type: undefined, 
                 category_id: undefined, 
@@ -461,7 +461,7 @@ onMounted(async () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          class="w-9 h-9 rounded-lg hover:bg-emerald-100 text-emerald-700 transition-colors"
+                          class="w-11 h-11 rounded-full hover:bg-emerald-100 text-emerald-700 transition-colors"
                           @click="openEditModal(transaction)"
                         >
                           <Pencil class="w-4 h-4" />
@@ -469,7 +469,7 @@ onMounted(async () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          class="w-9 h-9 rounded-lg hover:bg-rose-100 text-rose-600 transition-colors"
+                          class="w-11 h-11 rounded-full hover:bg-rose-100 text-rose-600 transition-colors"
                           @click="handleDelete(transaction.id)"
                         >
                           <Trash2 class="w-4 h-4" />
@@ -493,7 +493,7 @@ onMounted(async () => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  class="rounded-full h-10 w-10 p-0 text-emerald-900/60 hover:bg-emerald-50 disabled:opacity-30"
+                  class="rounded-full h-11 w-11 p-0 text-emerald-900/60 hover:bg-emerald-50 disabled:opacity-30"
                   :disabled="transactionStore.paginationMeta.current_page === 1"
                   @click="transactionStore.goToPage(transactionStore.paginationMeta.current_page - 1)"
                 >
@@ -507,7 +507,7 @@ onMounted(async () => {
                     variant="ghost"
                     size="sm"
                     :class="[
-                      'w-10 h-10 text-xs font-bold rounded-full transition-all',
+                      'w-11 h-11 text-xs font-bold rounded-full transition-all',
                       transactionStore.paginationMeta.current_page === page 
                         ? 'bg-emerald-900 text-white shadow-md shadow-emerald-900/10' 
                         : 'text-emerald-900/60 hover:bg-emerald-50'
@@ -521,7 +521,7 @@ onMounted(async () => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  class="rounded-full h-10 w-10 p-0 text-emerald-900/60 hover:bg-emerald-50 disabled:opacity-30"
+                  class="rounded-full h-11 w-11 p-0 text-emerald-900/60 hover:bg-emerald-50 disabled:opacity-30"
                   :disabled="transactionStore.paginationMeta.current_page === transactionStore.paginationMeta.last_page"
                   @click="transactionStore.goToPage(transactionStore.paginationMeta.current_page + 1)"
                 >
