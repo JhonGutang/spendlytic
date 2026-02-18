@@ -10,6 +10,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import ToastProvider from '@/components/ui/toast/ToastProvider.vue';
 
 const route = useRoute();
 
@@ -54,14 +55,13 @@ const closeMobileDrawer = () => {
 <template>
   <div class="min-h-screen bg-[#FDFCF8] flex relative isolate">
     <!-- Global Atmosphere (Noise) -->
-    <div class="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-multiply -z-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+    <div
+      class="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-multiply -z-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
+    </div>
 
     <!-- Desktop Sidebar - Fixed, sits beside the entire app (hidden on public pages) -->
     <div v-if="!isMobile && showAuthLayout" class="flex-shrink-0 fixed left-0 top-0 h-screen z-40">
-      <AppSidebar
-        :is-collapsed="isSidebarCollapsed"
-        @toggle-collapse="toggleSidebar"
-      />
+      <AppSidebar :is-collapsed="isSidebarCollapsed" @toggle-collapse="toggleSidebar" />
     </div>
 
     <!-- Mobile Drawer (hidden on public pages) -->
@@ -70,34 +70,22 @@ const closeMobileDrawer = () => {
         <SheetHeader class="sr-only">
           <SheetTitle>Navigation Menu</SheetTitle>
         </SheetHeader>
-        <AppSidebar
-          :is-collapsed="false"
-          :is-mobile-open="isMobileDrawerOpen"
-          @close-mobile="closeMobileDrawer"
-        />
+        <AppSidebar :is-collapsed="false" :is-mobile-open="isMobileDrawerOpen" @close-mobile="closeMobileDrawer" />
       </SheetContent>
     </Sheet>
 
     <!-- Main App Container (Header + Content) - Offset by sidebar width -->
-    <div 
-      class="flex-1 flex flex-col min-w-0 transition-[margin-left] duration-400 ease-in-out"
-      :style="{ marginLeft: !showAuthLayout ? '0' : (isMobile ? '0' : (isSidebarCollapsed ? '80px' : '288px')) }"
-    >
+    <div class="flex-1 flex flex-col min-w-0 transition-[margin-left] duration-400 ease-in-out"
+      :style="{ marginLeft: !showAuthLayout ? '0' : (isMobile ? '0' : (isSidebarCollapsed ? '80px' : '288px')) }">
       <!-- Mobile: Fixed Menu Button (hidden on public pages) -->
-      <button
-        v-if="isMobile && showAuthLayout"
-        @click="toggleSidebar"
+      <button v-if="isMobile && showAuthLayout" @click="toggleSidebar"
         class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-emerald-900 text-white rounded-full shadow-xl flex items-center justify-center hover:bg-emerald-800 transition-all hover:scale-105 active:scale-95"
-        aria-label="Open menu"
-      >
+        aria-label="Open menu">
         <Menu class="w-6 h-6" />
       </button>
 
       <!-- Header (hidden on public pages) -->
-      <AppHeader 
-        v-if="showAuthLayout"
-        :is-collapsed="isSidebarCollapsed"
-      />
+      <AppHeader v-if="showAuthLayout" :is-collapsed="isSidebarCollapsed" />
 
       <!-- Main Content -->
       <main class="flex-1 overflow-auto">
@@ -106,6 +94,9 @@ const closeMobileDrawer = () => {
         </div>
       </main>
     </div>
+
+    <!-- Global Notifications -->
+    <ToastProvider />
   </div>
 </template>
 
